@@ -1,0 +1,7 @@
+services:
+  storybook:
+    build: ./
+    volumes:
+      - .:/kateform
+    ports:
+      - 6006:6006
