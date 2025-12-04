@@ -3,10 +3,11 @@
 import type React from "react";
 import { BaseTextInput, InputWrapper } from "@internal/components";
 
-export type NumberInputProps = Omit<
-  React.ComponentProps<"input">,
-  "id" | "type" | "value" | "onChange"
-> & {
+export interface NumberInputProps
+  extends Omit<
+    React.ComponentProps<"input">,
+    "id" | "type" | "value" | "onChange"
+  > {
   id: string;
   label?: string;
   isDisabled?: boolean;
@@ -17,7 +18,7 @@ export type NumberInputProps = Omit<
   endContent?: React.ReactNode;
   value?: number | null | undefined;
   onChange?: (v: number) => void;
-};
+}
 
 export function NumberInput({
   label,

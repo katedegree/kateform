@@ -1,6 +1,3 @@
-import { placeholderClassName } from "../classNames";
-import { cn } from "../utils";
-
 interface MediaInputLabelProps {
   size: number;
   placeholder: string | undefined;
@@ -9,10 +6,7 @@ interface MediaInputLabelProps {
 export function MediaInputLabel({ size, placeholder }: MediaInputLabelProps) {
   return (
     <div
-      className={cn(
-        "flex flex-col justify-center items-center gap-md h-auto aspect-square text-value bg-flat hover:bg-flat-hover rounded-input",
-        placeholderClassName
-      )}
+      className="flex flex-col justify-center items-center gap-md h-auto aspect-square text-placeholder bg-flat hover:bg-flat-hover rounded-input"
       style={{
         width: size,
       }}

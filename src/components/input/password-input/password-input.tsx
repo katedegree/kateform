@@ -3,10 +3,8 @@
 import { useState } from "react";
 import { BaseTextInput, InputWrapper } from "@internal/components";
 
-export type PasswordInputProps = Omit<
-  React.ComponentProps<"input">,
-  "type" | "id"
-> & {
+export interface PasswordInputProps
+  extends Omit<React.ComponentProps<"input">, "type" | "id"> {
   id: string;
   label?: string;
   isDisabled?: boolean;
@@ -15,7 +13,7 @@ export type PasswordInputProps = Omit<
   errorMessage?: string;
   startContent?: React.ReactNode;
   endContent?: React.ReactNode;
-};
+}
 
 export function PasswordInput({
   label,

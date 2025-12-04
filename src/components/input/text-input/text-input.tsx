@@ -2,10 +2,8 @@
 
 import { InputWrapper, BaseTextInput } from "@internal/components";
 
-export type TextInputProps = Omit<
-  React.ComponentProps<"input">,
-  "type" | "id"
-> & {
+export interface TextInputProps
+  extends Omit<React.ComponentProps<"input">, "type" | "id"> {
   id: string;
   label?: string;
   isDisabled?: boolean;
@@ -14,7 +12,7 @@ export type TextInputProps = Omit<
   errorMessage?: string;
   startContent?: React.ReactNode;
   endContent?: React.ReactNode;
-};
+}
 
 export function TextInput({
   label,

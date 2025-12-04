@@ -1,7 +1,6 @@
 "use client";
 
 import { cn } from "../utils";
-import { placeholderClassName } from "../classNames";
 import { useStore } from "../store";
 
 export interface BaseTextInputProps
@@ -23,14 +22,12 @@ export function BaseTextInput({
   return (
     <div className="rounded-input text-value bg-flat hover:bg-flat-hover overflow-hidden focus-within:bg-flat-hover">
       <div className="w-full px-lg flex items-center gap-md">
-        {startContent && (
-          <div className={placeholderClassName}>{startContent}</div>
-        )}
+        {startContent && <div className="text-placeholder">{startContent}</div>}
         <input
           {...props}
           className={cn(
             "w-full py-md outline-none autofill:bg-transparent bg-clip-text",
-            "placeholder:text-value/70 caret-value [&:-webkit-autofill]:[-webkit-text-fill-color:var(--color-value)]",
+            "placeholder:text-placeholder caret-value [&:-webkit-autofill]:[-webkit-text-fill-color:var(--color-value)]",
             props.className
           )}
           onChange={(e) => {
@@ -38,7 +35,7 @@ export function BaseTextInput({
             props.onChange?.(e);
           }}
         />
-        {endContent && <div className={placeholderClassName}>{endContent}</div>}
+        {endContent && <div className="text-placeholder">{endContent}</div>}
         {actionContent}
       </div>
     </div>

@@ -1,1 +1,0 @@
-export const transitionClassName = "transition duration-700 ease-in-out";
