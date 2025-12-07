@@ -2,6 +2,7 @@
 
 import { cn } from "../utils";
 import { useStore } from "../store";
+import { useEffect } from "react";
 
 export interface BaseTextInputProps
   extends Omit<React.ComponentProps<"input">, "id"> {
@@ -19,6 +20,10 @@ export function BaseTextInput({
 }: BaseTextInputProps) {
   const { setErrorMessage } = useStore();
 
+  useEffect(() => {
+    setErrorMessage(props.id, "");
+  }, [props.value]);
+
   return (
     <div className="rounded-input text-value bg-flat hover:bg-flat-hover overflow-hidden focus-within:bg-flat-hover">
       <div className="w-full px-lg flex items-center gap-md">
@@ -30,10 +35,6 @@ export function BaseTextInput({
             "placeholder:text-placeholder caret-value [&:-webkit-autofill]:[-webkit-text-fill-color:var(--color-value)]",
             props.className
           )}
-          onChange={(e) => {
-            setErrorMessage(props.id, "");
-            props.onChange?.(e);
-          }}
         />
         {endContent && <div className="text-placeholder">{endContent}</div>}
         {actionContent}

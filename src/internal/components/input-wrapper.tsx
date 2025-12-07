@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { cn } from "../utils";
 import { useStore } from "../store";
+import { motion } from "framer-motion";
 
 export interface InputWrapperProps {
   id: string;
@@ -36,12 +37,28 @@ export function InputWrapper({
         {label}
       </label>
 
-      <div
+      <motion.div
         className={cn(
-          "relative rounded-input outline-error",
-          errorMessages[id] && "outline outline-offset-1",
+          "relative rounded-input outline-solid",
           isDisabled && "opacity-80"
         )}
+        animate={
+          errorMessages[id]
+            ? {
+                outlineWidth: "1px",
+                outlineOffset: "1px",
+                outlineColor: "var(--kateform-color-error)",
+              }
+            : {
+                outlineWidth: "0px",
+                outlineOffset: "0px",
+                outlineColor: "transparent",
+              }
+        }
+        transition={{
+          type: "tween",
+          duration: 0.2,
+        }}
       >
         {children}
         {isReadOnly && (
@@ -50,7 +67,7 @@ export function InputWrapper({
         {isDisabled && (
           <div className="absolute inset-[0] hover:cursor-not-allowed" />
         )}
-      </div>
+      </motion.div>
       <p
         className={cn(
           "h-[1lh] pt-1 text-sm text-error",

@@ -15,11 +15,14 @@ type KateFormProviderProps = DeepPartial<{
       text: {
         label: string; // --kateform-color-label
         value: string; // --kateform-color-value
+        option: string; // --kateform-color-option
         error: string; // --kateform-color-error
       };
       background: {
         flat: string; // --kateform-color-flat
         flatHover: string; // --kateform-color-flat-hover
+        popover: string; // --kateform-color-popover
+        popoverHover: string; // --kateform-color-popover-hover
       };
       border: {
         bordered: string; // --kateform-color-bordered
@@ -30,11 +33,14 @@ type KateFormProviderProps = DeepPartial<{
       text: {
         label: string;
         value: string;
+        option: string;
         error: string;
       };
       background: {
         flat: string;
         flatHover: string;
+        popover: string;
+        popoverHover: string;
       };
       border: {
         bordered: string;
@@ -72,25 +78,39 @@ export function KateFormProvider({
   // TODO: Add input mode
   // const inputMode = mode?.input;
 
-  const lightLabelColor = color?.light?.text?.label;
-  const lightValueColor = color?.light?.text?.value;
-  const lightErrorColor = color?.light?.text?.error;
-  const lightFlatColor = color?.light?.background?.flat;
-  const lightFlatHoverColor =
-    color?.light?.background?.flatHover || lightFlatColor;
-  const lightBorderedColor = color?.light?.border?.bordered;
-  const lightBorderedHoverColor =
-    color?.light?.border?.borderedHover || lightBorderedColor;
+  const { light = {}, dark = {} } = color ?? {};
+  const {
+    text: ltText = {},
+    background: ltBg = {},
+    border: ltBorder = {},
+  } = light;
+  const {
+    text: dkText = {},
+    background: dkBg = {},
+    border: dkBorder = {},
+  } = dark;
 
-  const darkLabelColor = color?.dark?.text?.label;
-  const darkValueColor = color?.dark?.text?.value;
-  const darkErrorColor = color?.dark?.text?.error;
-  const darkFlatColor = color?.dark?.background?.flat;
-  const darkFlatHoverColor =
-    color?.dark?.background?.flatHover || darkFlatColor;
-  const darkBorderedColor = color?.dark?.border?.bordered;
-  const darkBorderedHoverColor =
-    color?.dark?.border?.borderedHover || darkBorderedColor;
+  const lightLabelColor = ltText.label;
+  const lightValueColor = ltText.value;
+  const lightOptionColor = ltText.option;
+  const lightErrorColor = ltText.error;
+  const lightFlatColor = ltBg.flat;
+  const lightFlatHoverColor = ltBg.flatHover || lightFlatColor;
+  const lightPopoverColor = ltBg.popover;
+  const lightPopoverHoverColor = ltBg.popoverHover || lightPopoverColor;
+  const lightBorderedColor = ltBorder.bordered;
+  const lightBorderedHoverColor = ltBorder.borderedHover || lightBorderedColor;
+
+  const darkLabelColor = dkText.label;
+  const darkValueColor = dkText.value;
+  const darkOptionColor = dkText.option;
+  const darkErrorColor = dkText.error;
+  const darkFlatColor = dkBg.flat;
+  const darkFlatHoverColor = dkBg.flatHover || darkFlatColor;
+  const darkPopoverColor = dkBg.popover;
+  const darkPopoverHoverColor = dkBg.popoverHover || darkPopoverColor;
+  const darkBorderedColor = dkBorder.bordered;
+  const darkBorderedHoverColor = dkBorder.borderedHover || darkBorderedColor;
 
   const mdText = text?.md;
   const smText = text?.sm;
@@ -120,17 +140,23 @@ export function KateFormProvider({
       setCSSVariables({
         "--kateform-color-light-label": lightLabelColor,
         "--kateform-color-light-value": lightValueColor,
+        "--kateform-color-light-option": lightOptionColor,
         "--kateform-color-light-error": lightErrorColor,
         "--kateform-color-light-flat": lightFlatColor,
         "--kateform-color-light-flat-hover": lightFlatHoverColor,
+        "--kateform-color-light-popover": lightPopoverColor,
+        "--kateform-color-light-popover-hover": lightPopoverHoverColor,
         "--kateform-color-light-bordered": lightBorderedColor,
         "--kateform-color-light-bordered-hover": lightBorderedHoverColor,
 
         "--kateform-color-dark-label": darkLabelColor,
         "--kateform-color-dark-value": darkValueColor,
+        "--kateform-color-dark-option": darkOptionColor,
         "--kateform-color-dark-error": darkErrorColor,
         "--kateform-color-dark-flat": darkFlatColor,
         "--kateform-color-dark-flat-hover": darkFlatHoverColor,
+        "--kateform-color-dark-popover": darkPopoverColor,
+        "--kateform-color-dark-popover-hover": darkPopoverHoverColor,
         "--kateform-color-dark-bordered": darkBorderedColor,
         "--kateform-color-dark-bordered-hover": darkBorderedHoverColor,
       }),
