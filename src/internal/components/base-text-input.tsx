@@ -25,7 +25,10 @@ export function BaseTextInput({
   }, [props.value]);
 
   return (
-    <div className="rounded-input text-value bg-flat hover:bg-flat-hover overflow-hidden focus-within:bg-flat-hover">
+    <div
+      className="rounded-input text-value bg-flat hover:bg-flat-hover overflow-hidden focus-within:bg-flat-hover"
+      onClick={props.onClick}
+    >
       <div className="w-full px-lg flex items-center gap-md">
         {startContent && <div className="text-placeholder">{startContent}</div>}
         <input

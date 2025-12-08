@@ -2,7 +2,7 @@
 
 import { InputWrapper, BaseTextInput } from "@internal/components";
 import { cn } from "@internal/utils";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 
 export interface SelectInputProps<T extends string | number>
@@ -39,6 +39,95 @@ export function SelectInput<T extends string | number>({
   ...props
 }: SelectInputProps<T>) {
   const [isOpen, setIsOpen] = useState(false);
+  const [popoverPos, setPopoverPos] = useState({
+    top: 0,
+    bottom: 0,
+    left: 0,
+    width: 0,
+    isBottom: true,
+  });
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const popoverRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (!wrapperRef.current) return;
+      if (!wrapperRef.current.contains(e.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  useEffect(() => {
+    if (!isOpen || !popoverRef.current) return;
+    const el = popoverRef.current;
+    let startY = 0;
+    const handleWheel = (e: WheelEvent) => {
+      if (!el.contains(e.target as Node)) return;
+      const delta = e.deltaY;
+      const atTop = el.scrollTop === 0;
+      const atBottom = el.scrollHeight - el.scrollTop === el.clientHeight;
+
+      if ((delta < 0 && atTop) || (delta > 0 && atBottom)) {
+        e.preventDefault();
+      }
+    };
+    const onTouchStart = (e: TouchEvent) => {
+      if (!el.contains(e.target as Node) || !e.touches[0]) return;
+      startY = e.touches[0].clientY;
+    };
+    const onTouchMove = (e: TouchEvent) => {
+      if (!el.contains(e.target as Node) || !e.touches[0]) return;
+      const currentY = e.touches[0].clientY;
+      const delta = startY - currentY;
+      const atTop = el.scrollTop === 0;
+      const atBottom = el.scrollHeight - el.scrollTop === el.clientHeight;
+      if ((delta < 0 && atTop) || (delta > 0 && atBottom)) {
+        e.preventDefault();
+      }
+    };
+    document.addEventListener("wheel", handleWheel, { passive: false });
+    document.addEventListener("touchstart", onTouchStart, { passive: false });
+    document.addEventListener("touchmove", onTouchMove, { passive: false });
+    return () => {
+      document.removeEventListener("wheel", handleWheel);
+      document.removeEventListener("touchstart", onTouchStart);
+      document.removeEventListener("touchmove", onTouchMove);
+    };
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (!isOpen || !wrapperRef.current) return;
+    const rect = wrapperRef.current.getBoundingClientRect();
+    const spaceBelow = window.innerHeight - rect.bottom;
+    const initialIsBottom = spaceBelow >= popoverHeight;
+    setPopoverPos({
+      top: rect.top,
+      bottom: rect.bottom,
+      left: rect.left,
+      width: rect.width,
+      isBottom: initialIsBottom,
+    });
+    const updatePopoverPos = () => {
+      if (!wrapperRef.current) return;
+      const rect = wrapperRef.current.getBoundingClientRect();
+      setPopoverPos((prev) => ({
+        ...prev,
+        top: rect.top,
+        bottom: rect.bottom,
+        left: rect.left,
+        width: rect.width,
+      }));
+    };
+    window.addEventListener("scroll", updatePopoverPos);
+    window.addEventListener("resize", updatePopoverPos);
+    return () => {
+      window.removeEventListener("scroll", updatePopoverPos);
+      window.removeEventListener("resize", updatePopoverPos);
+    };
+  }, [isOpen, popoverHeight]);
 
   return (
     <InputWrapper
@@ -49,9 +138,10 @@ export function SelectInput<T extends string | number>({
       errorMessage={errorMessage}
       onReadOnly={onReadOnly}
     >
-      <div className="relative">
+      <div ref={wrapperRef}>
         {isOpen && (
           <motion.div
+            ref={popoverRef}
             initial="initial"
             animate="enter"
             exit="exit"
@@ -80,9 +170,14 @@ export function SelectInput<T extends string | number>({
               },
             }}
             style={{
+              top: popoverPos.isBottom
+                ? `calc(${popoverPos.bottom}px + var(--kateform-spacing-sm))`
+                : `calc(${popoverPos.top}px - ${popoverHeight}px - var(--kateform-spacing-sm))`,
+              left: popoverPos.left,
+              width: popoverPos.width,
               maxHeight: `${popoverHeight}px`,
             }}
-            className="absolute top-[calc(100%_+_var(--spacing-sm))] w-full p-sm rounded-input bg-popover border border-popover-hover overflow-auto shadow shadow-popover-hover no-scrollbar"
+            className="fixed z-100 p-sm rounded-input bg-popover border border-popover-hover overflow-y-auto shadow shadow-popover-hover no-scrollbar"
           >
             {options?.map((option) => (
               <div
