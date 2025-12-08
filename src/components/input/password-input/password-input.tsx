@@ -4,8 +4,9 @@ import { useState } from "react";
 import { BaseTextInput, InputWrapper } from "@internal/components";
 
 export interface PasswordInputProps
-  extends Omit<React.ComponentProps<"input">, "type" | "id"> {
+  extends Omit<React.ComponentProps<"input">, "type" | "id" | "ref"> {
   id: string;
+  ref?: React.RefObject<HTMLDivElement | null>;
   label?: string;
   isDisabled?: boolean;
   isReadOnly?: boolean;
@@ -16,6 +17,7 @@ export interface PasswordInputProps
 }
 
 export function PasswordInput({
+  ref,
   label,
   isDisabled = false,
   isReadOnly = false,
@@ -38,6 +40,7 @@ export function PasswordInput({
     >
       <BaseTextInput
         {...props}
+        ref={ref}
         startContent={startContent}
         endContent={endContent}
         actionContent={

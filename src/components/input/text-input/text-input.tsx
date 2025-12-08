@@ -3,8 +3,9 @@
 import { InputWrapper, BaseTextInput } from "@internal/components";
 
 export interface TextInputProps
-  extends Omit<React.ComponentProps<"input">, "type" | "id"> {
+  extends Omit<React.ComponentProps<"input">, "type" | "id" | "ref"> {
   id: string;
+  ref?: React.RefObject<HTMLDivElement | null>;
   label?: string;
   isDisabled?: boolean;
   isReadOnly?: boolean;
@@ -15,6 +16,7 @@ export interface TextInputProps
 }
 
 export function TextInput({
+  ref,
   label,
   isDisabled = false,
   isReadOnly = false,
@@ -35,6 +37,7 @@ export function TextInput({
     >
       <BaseTextInput
         {...props}
+        ref={ref}
         startContent={startContent}
         endContent={endContent}
         type="text"

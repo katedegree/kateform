@@ -5,17 +5,19 @@ import { useStore } from "../store";
 import { useEffect } from "react";
 
 export interface BaseTextInputProps
-  extends Omit<React.ComponentProps<"input">, "id"> {
+  extends Omit<React.ComponentProps<"input">, "id" | "ref"> {
   id: string;
   startContent: React.ReactNode;
   endContent: React.ReactNode;
   actionContent?: React.ReactNode;
+  ref: React.RefObject<HTMLDivElement | null> | undefined;
 }
 
 export function BaseTextInput({
   startContent,
   endContent,
   actionContent,
+  ref,
   ...props
 }: BaseTextInputProps) {
   const { setErrorMessage } = useStore();
@@ -28,6 +30,7 @@ export function BaseTextInput({
     <div
       className="rounded-input text-value bg-flat hover:bg-flat-hover overflow-hidden focus-within:bg-flat-hover"
       onClick={props.onClick}
+      ref={ref}
     >
       <div className="w-full px-lg flex items-center gap-md">
         {startContent && <div className="text-placeholder">{startContent}</div>}
