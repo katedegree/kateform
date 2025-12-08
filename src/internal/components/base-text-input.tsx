@@ -10,7 +10,7 @@ export interface BaseTextInputProps
   startContent: React.ReactNode;
   endContent: React.ReactNode;
   actionContent?: React.ReactNode;
-  ref: React.RefObject<HTMLDivElement | null> | undefined;
+  ref?: React.RefObject<HTMLDivElement | null> | undefined;
 }
 
 export function BaseTextInput({

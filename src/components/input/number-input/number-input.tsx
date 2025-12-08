@@ -9,7 +9,6 @@ export interface NumberInputProps
     "id" | "type" | "value" | "onChange" | "ref"
   > {
   id: string;
-  ref?: React.RefObject<HTMLDivElement | null>;
   label?: string;
   isDisabled?: boolean;
   isReadOnly?: boolean;
@@ -22,7 +21,6 @@ export interface NumberInputProps
 }
 
 export function NumberInput({
-  ref,
   label,
   isDisabled = false,
   isReadOnly = false,
@@ -43,7 +41,6 @@ export function NumberInput({
     >
       <BaseTextInput
         {...props}
-        ref={ref}
         startContent={startContent}
         endContent={endContent}
         actionContent={
