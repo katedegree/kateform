@@ -2,10 +2,14 @@
   "name": "kateform",
   "version": "1.0.0",
   "main": "index.js",
+  "bin": {
+    "kateform-cli": "./dist/cli.js"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "storybook": "storybook dev -p 6006 --no-open",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "build-cli": "tsc -p tsconfig.cli.json"
   },
   "keywords": [],
   "author": "",

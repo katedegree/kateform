@@ -1,6 +1,6 @@
 "use client";
 
-import { InputWrapper, BaseTextInput } from "@internal/components";
+import { InputWrapper, BaseTextInput } from "@kateform/internal/components";
 
 export interface TextInputProps
   extends Omit<React.ComponentProps<"input">, "type" | "id" | "ref"> {

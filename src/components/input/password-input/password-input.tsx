@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { BaseTextInput, InputWrapper } from "@internal/components";
+import { BaseTextInput, InputWrapper } from "@kateform/internal/components";
 
 export interface PasswordInputProps
   extends Omit<React.ComponentProps<"input">, "type" | "id" | "ref"> {

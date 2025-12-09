@@ -1,7 +1,7 @@
 "use client";
 
 import type React from "react";
-import { BaseTextInput, InputWrapper } from "@internal/components";
+import { BaseTextInput, InputWrapper } from "@kateform/internal/components";
 
 export interface NumberInputProps
   extends Omit<

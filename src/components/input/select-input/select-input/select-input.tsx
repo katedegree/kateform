@@ -1,9 +1,9 @@
 "use client";
 
-import { InputWrapper, BaseTextInput } from "@internal/components";
-import { cn } from "@internal/utils";
-import { usePopover } from "@internal/hooks/use-popover";
-import { SelectPopover } from "@internal/components/select-popover";
+import { InputWrapper, BaseTextInput } from "@kateform/internal/components";
+import { cn } from "@kateform/internal/utils";
+import { usePopover } from "@kateform/internal/hooks/use-popover";
+import { SelectPopover } from "@kateform/internal/components/select-popover";
 
 export interface SelectInputProps<T extends string | number>
   extends Omit<

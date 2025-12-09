@@ -13,7 +13,7 @@ const config: StorybookConfig = {
     return mergeConfig(viteConfig, {
       resolve: {
         alias: {
-          "@internal": resolve("src/internal"),
+          "@kateform": resolve("src"),
         },
       },
     });
