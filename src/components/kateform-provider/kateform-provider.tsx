@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect } from "react";
 
 type DeepPartial<T> = {
@@ -72,8 +74,6 @@ export function KateFormProvider({
   spacing,
   radius,
 }: KateFormProviderProps) {
-  const root = document.documentElement;
-
   const themaMode = mode?.thema;
   // TODO: Add input mode
   // const inputMode = mode?.input;
@@ -123,74 +123,75 @@ export function KateFormProvider({
   const radiusInput = radius?.input;
   const radiusForm = radius?.form;
 
-  const setCSSVariables = (map: Record<string, string | undefined>) => {
+  const setCSSVariables = (
+    root: HTMLElement,
+    map: Record<string, string | undefined>
+  ) => {
     Object.entries(map).forEach(([key, value]) => {
       if (value) root.style.setProperty(key, value);
     });
   };
 
   useEffect(() => {
+    const root = document.documentElement;
     themaMode === "dark"
       ? root.classList.add("dark")
       : root.classList.remove("dark");
   }, [themaMode]);
 
-  useEffect(
-    () =>
-      setCSSVariables({
-        "--kateform-color-light-label": lightLabelColor,
-        "--kateform-color-light-value": lightValueColor,
-        "--kateform-color-light-option": lightOptionColor,
-        "--kateform-color-light-error": lightErrorColor,
-        "--kateform-color-light-flat": lightFlatColor,
-        "--kateform-color-light-flat-hover": lightFlatHoverColor,
-        "--kateform-color-light-popover": lightPopoverColor,
-        "--kateform-color-light-popover-hover": lightPopoverHoverColor,
-        "--kateform-color-light-bordered": lightBorderedColor,
-        "--kateform-color-light-bordered-hover": lightBorderedHoverColor,
+  useEffect(() => {
+    const root = document.documentElement;
+    setCSSVariables(root, {
+      "--kateform-color-light-label": lightLabelColor,
+      "--kateform-color-light-value": lightValueColor,
+      "--kateform-color-light-option": lightOptionColor,
+      "--kateform-color-light-error": lightErrorColor,
+      "--kateform-color-light-flat": lightFlatColor,
+      "--kateform-color-light-flat-hover": lightFlatHoverColor,
+      "--kateform-color-light-popover": lightPopoverColor,
+      "--kateform-color-light-popover-hover": lightPopoverHoverColor,
+      "--kateform-color-light-bordered": lightBorderedColor,
+      "--kateform-color-light-bordered-hover": lightBorderedHoverColor,
 
-        "--kateform-color-dark-label": darkLabelColor,
-        "--kateform-color-dark-value": darkValueColor,
-        "--kateform-color-dark-option": darkOptionColor,
-        "--kateform-color-dark-error": darkErrorColor,
-        "--kateform-color-dark-flat": darkFlatColor,
-        "--kateform-color-dark-flat-hover": darkFlatHoverColor,
-        "--kateform-color-dark-popover": darkPopoverColor,
-        "--kateform-color-dark-popover-hover": darkPopoverHoverColor,
-        "--kateform-color-dark-bordered": darkBorderedColor,
-        "--kateform-color-dark-bordered-hover": darkBorderedHoverColor,
-      }),
-    [color]
-  );
+      "--kateform-color-dark-label": darkLabelColor,
+      "--kateform-color-dark-value": darkValueColor,
+      "--kateform-color-dark-option": darkOptionColor,
+      "--kateform-color-dark-error": darkErrorColor,
+      "--kateform-color-dark-flat": darkFlatColor,
+      "--kateform-color-dark-flat-hover": darkFlatHoverColor,
+      "--kateform-color-dark-popover": darkPopoverColor,
+      "--kateform-color-dark-popover-hover": darkPopoverHoverColor,
+      "--kateform-color-dark-bordered": darkBorderedColor,
+      "--kateform-color-dark-bordered-hover": darkBorderedHoverColor,
+    }),
+      [color];
+  });
 
-  useEffect(
-    () =>
-      setCSSVariables({
-        "--kateform-text-sm": smText,
-        "--kateform-text-md": mdText,
-      }),
-    [text]
-  );
+  useEffect(() => {
+    const root = document.documentElement;
+    setCSSVariables(root, {
+      "--kateform-text-sm": smText,
+      "--kateform-text-md": mdText,
+    });
+  }, [text]);
 
-  useEffect(
-    () =>
-      setCSSVariables({
-        "--kateform-spacing-1": spacing1,
-        "--kateform-spacing-sm": spacingSm,
-        "--kateform-spacing-md": spacingMd,
-        "--kateform-spacing-lg": spacingLg,
-      }),
-    [spacing]
-  );
+  useEffect(() => {
+    const root = document.documentElement;
+    setCSSVariables(root, {
+      "--kateform-spacing-1": spacing1,
+      "--kateform-spacing-sm": spacingSm,
+      "--kateform-spacing-md": spacingMd,
+      "--kateform-spacing-lg": spacingLg,
+    });
+  }, [spacing]);
 
-  useEffect(
-    () =>
-      setCSSVariables({
-        "--kateform-radius-input": radiusInput,
-        "--kateform-radius-form": radiusForm,
-      }),
-    [radius]
-  );
+  useEffect(() => {
+    const root = document.documentElement;
+    setCSSVariables(root, {
+      "--kateform-radius-input": radiusInput,
+      "--kateform-radius-form": radiusForm,
+    });
+  }, [radius]);
 
   return <>{children}</>;
 }

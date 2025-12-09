@@ -84,7 +84,7 @@
   --kateform-color-bordered-hover: var(--kateform-color-dark-bordered-hover);
 }
 
-@theme {
+@theme inline {
   --*: initial;
 
   --color-label: var(--kateform-color-label);

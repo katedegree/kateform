@@ -5,8 +5,8 @@ import {
   BaseMediaInput,
   InputWrapper,
   MediaInputLabel,
-} from "@internal/components";
-import { useStore } from "@internal/store";
+} from "@kateform/internal/components";
+import { useStore } from "@kateform/internal/store";
 
 export interface MultiMediaInputProps {
   id: string;

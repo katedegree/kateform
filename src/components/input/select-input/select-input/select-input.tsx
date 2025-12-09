@@ -79,7 +79,7 @@ export function SelectInput<T extends string | number>({
         }
         type="text"
         readOnly
-        value={options?.find((option) => option.value === value)?.label}
+        value={options?.find((option) => option.value === value)?.label ?? ""}
         onClick={() => {
           setIsOpen(!isOpen);
         }}

@@ -47,6 +47,7 @@ export function SelectPopover<T extends string | number>({
     >
       {options?.map((option) => (
         <div
+          key={option.value}
           className="flex justify-between items-center text-option hover:bg-popover-hover p-md rounded-[calc(var(--radius-input)_-_var(--spacing-sm))]"
           onClick={() => onSelect?.(option.value)}
         >
@@ -59,9 +60,9 @@ export function SelectPopover<T extends string | number>({
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
               className="w-[1lh] h-[1lh]"
             >
               <path d="M20 6 9 17l-5-5" />
