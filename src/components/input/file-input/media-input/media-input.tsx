@@ -1,15 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
-  BaseMediaInput,
   InputWrapper,
   MediaInputLabel,
+  MediaInputPreview,
 } from "@kateform/internal/components";
 import { useStore } from "@kateform/internal/store";
 
 export interface MediaInputProps {
   id: string;
+  ref?: React.RefObject<HTMLInputElement | null>;
   label?: string;
   placeholder?: string;
   size?: number;
@@ -18,13 +19,16 @@ export interface MediaInputProps {
   isReadOnly?: boolean;
   errorMessage?: string;
   onReadOnly?: () => void;
-  onUpload?: (file: File) => Promise<void>;
-  onRemove?: () => void;
+  onChange?: {
+    upload: (file: File) => Promise<void>;
+    remove: () => void;
+  };
   spinner?: React.ReactNode;
 }
 
 export function MediaInput({
   id,
+  ref,
   label,
   isDisabled = false,
   isReadOnly = false,
@@ -33,21 +37,11 @@ export function MediaInput({
   size = 240,
   placeholder,
   url,
-  onUpload = async () => {},
-  onRemove = () => {},
+  onChange,
   spinner,
 }: MediaInputProps) {
-  const [localSize, setLocalSize] = useState<number>(size);
-  const [currentUrl, setCurrentUrl] = useState<string>();
   const [uploadingUrl, setUploadingUrl] = useState<string>();
   const { setErrorMessage } = useStore();
-
-  useEffect(() => {
-    setLocalSize(size >= 120 ? size : 120);
-  }, [size]);
-  useEffect(() => {
-    setCurrentUrl(url || undefined);
-  }, [url]);
 
   return (
     <div className="w-fit">
@@ -61,6 +55,7 @@ export function MediaInput({
       >
         <input
           id={id}
+          ref={ref}
           type="file"
           className="hidden"
           onChange={(e) => {
@@ -73,24 +68,22 @@ export function MediaInput({
             const url = baseUrl + fragment;
 
             setUploadingUrl(url);
-            onUpload(file).finally(() => {
+            onChange?.upload(file).finally(() => {
               setUploadingUrl(undefined);
             });
           }}
         />
-        <label htmlFor={id}>
-          {currentUrl || uploadingUrl ? (
-            <BaseMediaInput
-              size={localSize}
-              url={currentUrl || uploadingUrl}
-              isUploading={!!uploadingUrl}
-              onRemove={onRemove}
-              spinner={spinner}
-            />
-          ) : (
-            <MediaInputLabel size={localSize} placeholder={placeholder} />
-          )}
-        </label>
+        {url || uploadingUrl ? (
+          <MediaInputPreview
+            size={size}
+            url={uploadingUrl || url || undefined}
+            isUploading={!!uploadingUrl}
+            onRemove={onChange?.remove}
+            spinner={spinner}
+          />
+        ) : (
+          <MediaInputLabel id={id} size={size} placeholder={placeholder} />
+        )}
       </InputWrapper>
     </div>
   );

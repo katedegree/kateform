@@ -1,9 +1,9 @@
 "use client";
 
-import { InputWrapper, BaseTextInput } from "@kateform/internal/components";
+import { Input, InputWrapper } from "@kateform/internal/components";
 
 export interface TextInputProps
-  extends Omit<React.ComponentProps<"input">, "type" | "id" | "ref"> {
+  extends Omit<React.ComponentProps<"input">, "type" | "id" | "name"> {
   id: string;
   label?: string;
   isDisabled?: boolean;
@@ -12,6 +12,7 @@ export interface TextInputProps
   errorMessage?: string;
   startContent?: React.ReactNode;
   endContent?: React.ReactNode;
+  actionContent?: React.ReactNode;
 }
 
 export function TextInput({
@@ -22,6 +23,7 @@ export function TextInput({
   errorMessage,
   startContent,
   endContent,
+  actionContent,
   ...props
 }: TextInputProps) {
   return (
@@ -33,10 +35,11 @@ export function TextInput({
       errorMessage={errorMessage}
       onReadOnly={onReadOnly}
     >
-      <BaseTextInput
+      <Input
         {...props}
         startContent={startContent}
         endContent={endContent}
+        actionContent={actionContent}
         type="text"
       />
     </InputWrapper>

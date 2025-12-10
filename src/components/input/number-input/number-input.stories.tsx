@@ -20,7 +20,6 @@ export const Default: Story = {
   args: {
     label: "年齢",
     id: "age",
-    name: "age",
     placeholder: "年齢を入力してください。",
     onChange: (v) => console.log(v),
     onReadOnly: () => console.log("readonly"),

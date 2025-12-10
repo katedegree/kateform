@@ -13,7 +13,6 @@ export const Default: Story = {
   args: {
     label: "パスワード",
     id: "password",
-    name: "password",
     placeholder: "パスワードを入力してください",
     onChange: (e) => console.log(e),
     isDisabled: false,

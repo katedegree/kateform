@@ -4,22 +4,19 @@ import { cn } from "../utils";
 import { useStore } from "../store";
 import { useEffect } from "react";
 
-export interface BaseTextInputProps
-  extends Omit<React.ComponentProps<"input">, "id" | "ref"> {
+export interface InputProps extends Omit<React.ComponentProps<"input">, "id"> {
   id: string;
   startContent: React.ReactNode;
   endContent: React.ReactNode;
   actionContent?: React.ReactNode;
-  ref?: React.RefObject<HTMLDivElement | null> | undefined;
 }
 
-export function BaseTextInput({
+export function Input({
   startContent,
   endContent,
   actionContent,
-  ref,
   ...props
-}: BaseTextInputProps) {
+}: InputProps) {
   const { setErrorMessage } = useStore();
 
   useEffect(() => {
@@ -30,7 +27,6 @@ export function BaseTextInput({
     <div
       className="rounded-input text-value bg-flat hover:bg-flat-hover overflow-hidden focus-within:bg-flat-hover"
       onClick={props.onClick}
-      ref={ref}
     >
       <div className="w-full px-lg flex items-center gap-md">
         {startContent && <div className="text-placeholder">{startContent}</div>}

@@ -1,15 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
-  BaseMediaInput,
   InputWrapper,
   MediaInputLabel,
+  MediaInputPreview,
 } from "@kateform/internal/components";
 import { useStore } from "@kateform/internal/store";
 
 export interface MultiMediaInputProps {
   id: string;
+  ref?: React.RefObject<HTMLInputElement | null>;
   label?: string;
   placeholder?: string;
   size?: number;
@@ -17,14 +18,17 @@ export interface MultiMediaInputProps {
   isDisabled?: boolean;
   isReadOnly?: boolean;
   errorMessage?: string;
+  onChange?: {
+    upload: (file: File) => Promise<void>;
+    remove: (url: string) => void;
+  };
   onReadOnly?: () => void;
-  onUpload?: (file: File) => Promise<void>;
-  onRemove?: (url: string) => void;
   spinner?: React.ReactNode;
 }
 
 export function MultiMediaInput({
   id,
+  ref,
   label,
   isDisabled = false,
   isReadOnly = false,
@@ -32,18 +36,12 @@ export function MultiMediaInput({
   errorMessage,
   size = 240,
   placeholder,
-  urls,
-  onUpload = async () => {},
-  onRemove = () => {},
+  urls = [],
+  onChange,
   spinner,
 }: MultiMediaInputProps) {
-  const [currentUrls, setCurrentUrls] = useState<string[]>([]);
   const [uploadingUrls, setUploadingUrls] = useState<string[]>([]);
   const { setErrorMessage } = useStore();
-
-  useEffect(() => {
-    setCurrentUrls(urls || []);
-  }, [urls]);
 
   return (
     <div className="w-fit">
@@ -57,6 +55,7 @@ export function MultiMediaInput({
       >
         <input
           id={id}
+          ref={ref}
           type="file"
           className="hidden"
           onChange={(e) => {
@@ -69,17 +68,15 @@ export function MultiMediaInput({
             const url = baseUrl + fragment;
 
             setUploadingUrls([url, ...uploadingUrls]);
-            onUpload(file).finally(() => {
+            onChange?.upload(file).finally(() => {
               setUploadingUrls(uploadingUrls.filter((u) => u !== url));
             });
           }}
         />
         <div className="flex [&>*]:flex-shrink-0 [&>*]:overflow-hidden gap-md">
-          <label htmlFor={id} className="block">
-            <MediaInputLabel size={size} placeholder={placeholder} />
-          </label>
+          <MediaInputLabel id={id} size={size} placeholder={placeholder} />
           {uploadingUrls.map((url) => (
-            <BaseMediaInput
+            <MediaInputPreview
               key={url}
               size={size}
               url={url}
@@ -87,12 +84,12 @@ export function MultiMediaInput({
               spinner={spinner}
             />
           ))}
-          {currentUrls.map((url) => (
-            <BaseMediaInput
+          {urls.map((url) => (
+            <MediaInputPreview
               key={url}
               size={size}
               url={url}
-              onRemove={() => onRemove(url)}
+              onRemove={() => onChange?.remove(url)}
               spinner={spinner}
             />
           ))}

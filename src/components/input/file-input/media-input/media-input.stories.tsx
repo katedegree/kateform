@@ -13,20 +13,19 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   render: (args) => {
     const [url, setUrl] = useState<string | null>(null);
+    const handleUpload = async (file: File) => {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const baseUrl = URL.createObjectURL(file);
+      const fragment = file.type.startsWith("image") ? "#.png" : "#.mp4";
+      const url = baseUrl + fragment;
+      setUrl(url);
+    };
+    const handleRemove = () => setUrl(null);
     return (
       <MediaInput
         {...args}
         url={url}
-        onUpload={async (file) => {
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-          const baseUrl = URL.createObjectURL(file);
-          const fragment = file.type.startsWith("image") ? "#.png" : "#.mp4";
-          const url = baseUrl + fragment;
-          setUrl(url);
-        }}
-        onRemove={() => {
-          setUrl(null);
-        }}
+        onChange={{ upload: handleUpload, remove: handleRemove }}
       />
     );
   },

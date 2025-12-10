@@ -1,12 +1,16 @@
 "use client";
 
 import type React from "react";
-import { BaseTextInput, InputWrapper } from "@kateform/internal/components";
+import {
+  Input,
+  InputWrapper,
+  NumberCounterIcon,
+} from "@kateform/internal/components";
 
 export interface NumberInputProps
   extends Omit<
     React.ComponentProps<"input">,
-    "id" | "type" | "value" | "onChange" | "ref"
+    "id" | "type" | "value" | "onChange" | "name"
   > {
   id: string;
   label?: string;
@@ -16,6 +20,7 @@ export interface NumberInputProps
   errorMessage?: string;
   startContent?: React.ReactNode;
   endContent?: React.ReactNode;
+  actionContent?: React.ReactNode;
   value?: number | null | undefined;
   onChange?: (v: number) => void;
 }
@@ -28,6 +33,17 @@ export function NumberInput({
   errorMessage,
   startContent,
   endContent,
+  actionContent = (
+    <NumberCounterIcon
+      onClick={(e) => {
+        const svg = e.currentTarget;
+        const { top, height } = svg.getBoundingClientRect();
+        const clickY = e.clientY - top;
+        const current = props.value ?? 0;
+        props.onChange?.(clickY < height / 2 ? current + 1 : current - 1);
+      }}
+    />
+  ),
   ...props
 }: NumberInputProps) {
   return (
@@ -39,34 +55,11 @@ export function NumberInput({
       errorMessage={errorMessage}
       onReadOnly={onReadOnly}
     >
-      <BaseTextInput
+      <Input
         {...props}
         startContent={startContent}
         endContent={endContent}
-        actionContent={
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="w-[24px] h-[24px] cursor-pointer"
-            onClick={(e) => {
-              const svg = e.currentTarget;
-              const { top, height } = svg.getBoundingClientRect();
-              const clickY = e.clientY - top;
-              const current = props.value ?? 0;
-              props.onChange?.(clickY < height / 2 ? current + 1 : current - 1);
-            }}
-          >
-            {" "}
-            <path d="m7 15 5 5 5-5" /> <path d="m7 9 5-5 5 5" />{" "}
-          </svg>
-        }
+        actionContent={actionContent}
         className="[&::-webkit-inner-spin-button]:[-webkit-appearance:none]"
         onWheel={(e) => {
           e.currentTarget.blur();
