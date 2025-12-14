@@ -9,7 +9,7 @@ export function usePopover(popoverHeight: number) {
     width: 0,
     isBottom: true,
   });
-  const inputRef = useRef<HTMLDivElement>(null);
+  const wrapperRef = useRef<HTMLDivElement>(null);
   const popoverRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -25,13 +25,9 @@ export function usePopover(popoverHeight: number) {
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (!popoverRef.current || !inputRef.current) return;
-      if (
-        !popoverRef.current.contains(e.target as Node) &&
-        !inputRef.current.contains(e.target as Node)
-      ) {
-        setIsOpen(false);
-      }
+      if (!wrapperRef.current) return;
+      if (!wrapperRef.current.contains(e.target as Node)) return;
+      if (!isOpen) return setIsOpen(false);
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
@@ -75,8 +71,8 @@ export function usePopover(popoverHeight: number) {
   }, [isOpen]);
 
   useEffect(() => {
-    if (!isOpen || !inputRef.current) return;
-    const rect = inputRef.current.getBoundingClientRect();
+    if (!isOpen || !wrapperRef.current) return;
+    const rect = wrapperRef.current.getBoundingClientRect();
     const spaceBelow = window.innerHeight - rect.bottom;
     const initialIsBottom = spaceBelow >= popoverHeight;
     setPopoverPos({
@@ -87,8 +83,8 @@ export function usePopover(popoverHeight: number) {
       isBottom: initialIsBottom,
     });
     const updatePopoverPos = () => {
-      if (!inputRef.current) return;
-      const rect = inputRef.current.getBoundingClientRect();
+      if (!wrapperRef.current) return;
+      const rect = wrapperRef.current.getBoundingClientRect();
       setPopoverPos((prev) => ({
         ...prev,
         top: rect.top,
@@ -108,7 +104,7 @@ export function usePopover(popoverHeight: number) {
   return {
     isOpen,
     setIsOpen,
-    inputRef,
+    wrapperRef,
     popoverRef,
   };
 }
