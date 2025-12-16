@@ -1,21 +1,22 @@
 import { motion } from "framer-motion";
+import { SelectCheckIcon } from "./icons/select-check-icon";
 
 interface SelectPopoverProps<T extends string | number> {
-  ref: React.RefObject<HTMLDivElement | null>;
+  popoverRef?: React.RefObject<HTMLDivElement | null>;
   options: { value: T; label: string }[] | undefined;
-  value: T | null | undefined;
+  selected: T[];
   onSelect: ((v: T) => void) | undefined;
 }
 
 export function SelectPopover<T extends string | number>({
-  ref,
+  popoverRef,
   options,
-  value,
+  selected,
   onSelect,
 }: SelectPopoverProps<T>) {
   return (
     <motion.div
-      ref={ref}
+      ref={popoverRef}
       initial="initial"
       animate="enter"
       exit="exit"
@@ -52,22 +53,7 @@ export function SelectPopover<T extends string | number>({
           onClick={() => onSelect?.(option.value)}
         >
           <p>{option.label}</p>
-          {option.value === value && (
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="w-[1lh] h-[1lh]"
-            >
-              <path d="M20 6 9 17l-5-5" />
-            </svg>
-          )}
+          {selected.includes(option.value) && <SelectCheckIcon />}
         </div>
       ))}
     </motion.div>

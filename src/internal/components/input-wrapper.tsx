@@ -31,7 +31,7 @@ export function InputWrapper({
   return (
     <div>
       <label
-        className="block pl-sm pb-sm font-bold text-label text-sm"
+        className="w-fit block pl-sm pb-sm font-bold text-label text-sm"
         htmlFor={isReadOnly || isDisabled ? undefined : id}
       >
         {label}

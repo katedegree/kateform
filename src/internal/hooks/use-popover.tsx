@@ -1,6 +1,9 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useImperativeHandle, useRef, useState } from "react";
 
-export function usePopover(popoverHeight: number) {
+export function usePopover(
+  ref: React.Ref<HTMLInputElement> | undefined,
+  popoverHeight: number
+) {
   const [isOpen, setIsOpen] = useState(false);
   const [popoverPos, setPopoverPos] = useState({
     top: 0,
@@ -9,9 +12,15 @@ export function usePopover(popoverHeight: number) {
     width: 0,
     isBottom: true,
   });
+  const inputRef = useRef<HTMLInputElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const popoverRef = useRef<HTMLDivElement>(null);
 
+  if (ref) {
+    useImperativeHandle(ref, () => inputRef.current!);
+  }
+
+  // popoverの位置
   useEffect(() => {
     if (!popoverRef.current) return;
     const style = popoverRef.current.style;
@@ -23,16 +32,34 @@ export function usePopover(popoverHeight: number) {
     style.maxHeight = `${popoverHeight}px`;
   }, [popoverPos, popoverHeight]);
 
+  // isOpentとフォーカスの同期
   useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (!wrapperRef.current) return;
-      if (!wrapperRef.current.contains(e.target as Node)) return;
-      if (!isOpen) return setIsOpen(false);
+    if (!inputRef.current) return;
+    isOpen ? inputRef.current.focus() : inputRef.current.blur();
+  }, [isOpen]);
+
+  // マウスイベント
+  useEffect(() => {
+    const handlePointerDown = (e: MouseEvent) => {
+      if (!wrapperRef.current || !inputRef.current) return;
+      if (popoverRef.current?.contains(e.target as Node)) {
+        e.preventDefault();
+        return;
+      }
+      if (wrapperRef.current.contains(e.target as Node)) {
+        e.preventDefault();
+        document.activeElement === inputRef.current
+          ? setIsOpen(false)
+          : setIsOpen(true);
+      } else {
+        setIsOpen(false);
+      }
     };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener("mousedown", handlePointerDown);
+    return () => document.removeEventListener("mousedown", handlePointerDown);
   }, []);
 
+  // popover内のスクロールイベント
   useEffect(() => {
     if (!isOpen || !popoverRef.current) return;
     const el = popoverRef.current;
@@ -70,6 +97,7 @@ export function usePopover(popoverHeight: number) {
     };
   }, [isOpen]);
 
+  // スクロール時のpopover位置
   useEffect(() => {
     if (!isOpen || !wrapperRef.current) return;
     const rect = wrapperRef.current.getBoundingClientRect();
@@ -104,6 +132,7 @@ export function usePopover(popoverHeight: number) {
   return {
     isOpen,
     setIsOpen,
+    inputRef,
     wrapperRef,
     popoverRef,
   };

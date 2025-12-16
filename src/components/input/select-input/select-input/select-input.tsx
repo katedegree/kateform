@@ -1,14 +1,19 @@
 "use client";
 
-import { InputWrapper, BaseTextInput } from "@kateform/internal/components";
-import { cn } from "@kateform/internal/utils";
+import {
+  Input,
+  InputWrapper,
+  SelectChevronIcon,
+} from "@kateform/internal/components";
 import { usePopover } from "@kateform/internal/hooks/use-popover";
 import { SelectPopover } from "@kateform/internal/components/select-popover";
+import { useEffect, useImperativeHandle, useState } from "react";
+import { inputProps } from "@kateform/internal/utils";
 
 export interface SelectInputProps<T extends string | number>
   extends Omit<
     React.ComponentProps<"input">,
-    "type" | "id" | "onChange" | "value" | "onSelect" | "ref"
+    "type" | "id" | "name" | "onChange" | "value"
   > {
   id: string;
   label?: string;
@@ -18,8 +23,9 @@ export interface SelectInputProps<T extends string | number>
   errorMessage?: string;
   startContent?: React.ReactNode;
   endContent?: React.ReactNode;
+  actionContent?: (isOpen: boolean) => React.ReactNode;
   options?: { value: T; label: string }[];
-  onSelect?: (v: T) => void;
+  onChange?: (v: T | null) => void;
   value?: T | null;
   popoverHeight?: number;
 }
@@ -32,13 +38,24 @@ export function SelectInput<T extends string | number>({
   errorMessage,
   startContent,
   endContent,
+  actionContent = (isOpen) => <SelectChevronIcon isOpen={isOpen} />,
   options,
-  onSelect,
+  onChange,
   value,
   popoverHeight = 160,
   ...props
 }: SelectInputProps<T>) {
-  const { isOpen, setIsOpen, inputRef, popoverRef } = usePopover(popoverHeight);
+  const { isOpen, setIsOpen, inputRef, wrapperRef, popoverRef } = usePopover(
+    props.ref,
+    popoverHeight
+  );
+
+  const [search, setSearch] = useState("");
+  useEffect(() => {
+    if (value) {
+      setSearch("");
+    }
+  }, [value]);
 
   return (
     <InputWrapper
@@ -49,52 +66,48 @@ export function SelectInput<T extends string | number>({
       errorMessage={errorMessage}
       onReadOnly={onReadOnly}
     >
-      <BaseTextInput
-        {...props}
-        ref={inputRef}
-        startContent={startContent}
-        endContent={endContent}
-        actionContent={
-          <div
-            className={cn(
-              "transition duration-200 ease-in-out",
-              isOpen ? "rotate-180" : "rotate-0"
-            )}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="w-[24px] h-[24px]"
-            >
-              <path d="m6 9 6 6 6-6" />
-            </svg>
-          </div>
-        }
-        type="text"
-        readOnly
-        value={options?.find((option) => option.value === value)?.label ?? ""}
-        onClick={() => {
-          setIsOpen(!isOpen);
-        }}
-      />
-      {isOpen && (
-        <SelectPopover
-          ref={popoverRef}
-          options={options}
-          value={value}
-          onSelect={(v) => {
-            setIsOpen(false);
-            onSelect?.(v);
-          }}
+      <div ref={wrapperRef}>
+        <Input
+          {...props}
+          startContent={startContent}
+          endContent={endContent}
+          actionContent={actionContent(isOpen)}
+          renderInput={
+            <div className="relative">
+              <p className="absolute">
+                {options?.find((o) => o.value === value)?.label}
+              </p>
+              <input
+                {...inputProps({
+                  ...props,
+                  placeholder: value ? "" : props.placeholder,
+                  type: "text",
+                  value: search,
+                  onChange: (e) => {
+                    if (value) {
+                      onChange?.(null);
+                    }
+                    setSearch(e.target.value);
+                  },
+                  onBlur: () => setSearch(""),
+                })}
+                ref={inputRef}
+              />
+            </div>
+          }
         />
-      )}
+        {isOpen && (
+          <SelectPopover
+            popoverRef={popoverRef}
+            options={options?.filter((o) => o.label.includes(search))}
+            selected={value ? [value] : []}
+            onSelect={(v) => {
+              onChange?.(v === value ? null : v);
+              setIsOpen(false);
+            }}
+          />
+        )}
+      </div>
     </InputWrapper>
   );
 }

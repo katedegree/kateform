@@ -31,7 +31,7 @@ export const Default: Story = {
       <SelectInput
         {...args}
         value={value}
-        onSelect={(v) => setValue(v)}
+        onChange={(v) => setValue(v)}
         options={options}
       />
     );
@@ -39,7 +39,6 @@ export const Default: Story = {
   args: {
     label: "誕生月",
     id: "birthMonth",
-    name: "birthMonth",
     placeholder: "月を選択してください",
     isDisabled: false,
     isReadOnly: false,

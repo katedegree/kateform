@@ -1,46 +1,38 @@
 "use client";
 
-import { cn } from "../utils";
 import { useStore } from "../store";
-import { useEffect } from "react";
+import { forwardRef, useEffect } from "react";
+import { inputProps } from "@kateform/internal/utils";
 
 export interface InputProps extends Omit<React.ComponentProps<"input">, "id"> {
   id: string;
   startContent: React.ReactNode;
   endContent: React.ReactNode;
   actionContent?: React.ReactNode;
+  renderInput?: React.ReactNode;
 }
 
-export function Input({
-  startContent,
-  endContent,
-  actionContent,
-  ...props
-}: InputProps) {
-  const { setErrorMessage } = useStore();
+export const Input = forwardRef<HTMLInputElement, InputProps>(
+  ({ startContent, endContent, actionContent, renderInput, ...props }, ref) => {
+    const { setErrorMessage } = useStore();
 
-  useEffect(() => {
-    setErrorMessage(props.id, "");
-  }, [props.value]);
+    useEffect(() => {
+      setErrorMessage(props.id, "");
+    }, [props.value]);
 
-  return (
-    <div
-      className="rounded-input text-value bg-flat hover:bg-flat-hover overflow-hidden focus-within:bg-flat-hover"
-      onClick={props.onClick}
-    >
-      <div className="w-full px-lg flex items-center gap-md">
+    return (
+      <div className="rounded-input text-value bg-flat hover:bg-flat-hover overflow-hidden focus-within:bg-flat-hover px-lg flex items-center gap-md">
         {startContent && <div className="text-placeholder">{startContent}</div>}
-        <input
-          {...props}
-          className={cn(
-            "w-full py-md outline-none autofill:bg-transparent bg-clip-text",
-            "placeholder:text-placeholder caret-value [&:-webkit-autofill]:[-webkit-text-fill-color:var(--color-value)]",
-            props.className
+        <div className="w-full py-md">
+          {renderInput ? (
+            renderInput
+          ) : (
+            <input {...inputProps(props)} ref={ref} />
           )}
-        />
+        </div>
         {endContent && <div className="text-placeholder">{endContent}</div>}
         {actionContent}
       </div>
-    </div>
-  );
-}
+    );
+  }
+);
