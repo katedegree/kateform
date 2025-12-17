@@ -38,22 +38,20 @@ export function usePopover(
     isOpen ? inputRef.current.focus() : inputRef.current.blur();
   }, [isOpen]);
 
-  // マウスイベント
+  // クリックイベント
   useEffect(() => {
-    const handlePointerDown = (e: MouseEvent) => {
-      if (!wrapperRef.current || !inputRef.current) return;
-      if (popoverRef.current?.contains(e.target as Node)) {
+    const handlePointerDown = (e: PointerEvent) => {
+      if (!wrapperRef.current) return;
+      if (wrapperRef.current.contains(e.target as Node)) {
         e.preventDefault();
+        setIsOpen(true);
         return;
       }
-      if (wrapperRef.current.contains(e.target as Node)) {
-        setIsOpen(!isOpen);
-      } else {
-        setIsOpen(false);
-      }
+      setIsOpen(false);
     };
-    document.addEventListener("mousedown", handlePointerDown);
-    return () => document.removeEventListener("mousedown", handlePointerDown);
+    document.addEventListener("pointerdown", handlePointerDown, true);
+    return () =>
+      document.removeEventListener("pointerdown", handlePointerDown, true);
   }, []);
 
   // popover内のスクロールイベント
