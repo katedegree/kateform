@@ -3,6 +3,7 @@
 import {
   Input,
   InputWrapper,
+  MultiSelectRemoveIcon,
   SelectChevronIcon,
 } from "@kateform/internal/components";
 import { usePopover } from "@kateform/internal/hooks/use-popover";
@@ -10,7 +11,7 @@ import { SelectPopover } from "@kateform/internal/components/select-popover";
 import { useEffect, useState } from "react";
 import { inputProps } from "@kateform/internal/utils";
 
-export interface SelectInputProps<T extends string | number>
+export interface MultiSelectInputProps<T extends string | number>
   extends Omit<
     React.ComponentProps<"input">,
     "type" | "id" | "name" | "onChange" | "value"
@@ -25,12 +26,12 @@ export interface SelectInputProps<T extends string | number>
   endContent?: React.ReactNode;
   actionContent?: (isOpen: boolean) => React.ReactNode;
   options?: { value: T; label: string }[];
-  onChange?: (v: T | null) => void;
-  value?: T | null;
+  onChange?: (v: T[]) => void;
+  value?: T[];
   popoverHeight?: number;
 }
 
-export function SelectInput<T extends string | number>({
+export function MultiSelectInput<T extends string | number>({
   label,
   isDisabled = false,
   isReadOnly = false,
@@ -41,10 +42,10 @@ export function SelectInput<T extends string | number>({
   actionContent = (isOpen) => <SelectChevronIcon isOpen={isOpen} />,
   options,
   onChange,
-  value,
+  value = [],
   popoverHeight = 160,
   ...props
-}: SelectInputProps<T>) {
+}: MultiSelectInputProps<T>) {
   const { isOpen, setIsOpen, inputRef, wrapperRef, popoverRef } = usePopover(
     props.ref,
     popoverHeight
@@ -70,25 +71,39 @@ export function SelectInput<T extends string | number>({
           startContent={startContent}
           endContent={endContent}
           actionContent={actionContent(isOpen)}
+          type="text"
           renderInput={
-            <div className="relative">
-              <p className="absolute">
-                {options?.find((o) => o.value === value)?.label}
-              </p>
+            <div className="flex flex-wrap gap-sm">
+              {options
+                ?.filter((option) => value.includes(option.value))
+                .map((option) => (
+                  <div
+                    className="flex items-center w-fit bg-popover whitespace-nowrap rounded-[calc(var(--radius-input)_-_var(--spacing-md))]"
+                    key={option.value}
+                  >
+                    <p className="pl-md">{option.label}</p>
+                    <button
+                      className="px-sm hover:text-error h-full flex items-center cursor-pointer"
+                      onClick={() => {
+                        onChange?.(value.filter((v) => v !== option.value));
+                      }}
+                    >
+                      <MultiSelectRemoveIcon />
+                    </button>
+                  </div>
+                ))}
               <input
                 {...inputProps({
                   ...props,
-                  placeholder: value ? "" : props.placeholder,
+                  placeholder: value.length ? "" : props.placeholder,
                   type: "text",
                   value: search,
                   onChange: (e) => {
-                    if (value) {
-                      onChange?.(null);
-                    }
                     setSearch(e.target.value);
                   },
                   onBlur: () => setSearch(""),
                   onFocus: () => setIsOpen(true),
+                  className: "flex-1",
                 })}
                 ref={inputRef}
               />
@@ -99,11 +114,12 @@ export function SelectInput<T extends string | number>({
           <SelectPopover
             popoverRef={popoverRef}
             options={options?.filter((o) => o.label.includes(search))}
-            selected={value ? [value] : []}
-            onSelect={(v) => {
-              onChange?.(v === value ? null : v);
-              setIsOpen(false);
-            }}
+            selected={value}
+            onSelect={(v) =>
+              onChange?.(
+                value.includes(v) ? value.filter((i) => i !== v) : [...value, v]
+              )
+            }
           />
         )}
       </div>

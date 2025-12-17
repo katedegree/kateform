@@ -47,10 +47,7 @@ export function usePopover(
         return;
       }
       if (wrapperRef.current.contains(e.target as Node)) {
-        e.preventDefault();
-        document.activeElement === inputRef.current
-          ? setIsOpen(false)
-          : setIsOpen(true);
+        setIsOpen(!isOpen);
       } else {
         setIsOpen(false);
       }
