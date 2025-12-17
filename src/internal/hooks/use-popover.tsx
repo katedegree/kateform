@@ -20,6 +20,13 @@ export function usePopover(
     useImperativeHandle(ref, () => inputRef.current!);
   }
 
+  const handleOpen = () => {
+    inputRef.current && inputRef.current.focus();
+  };
+  const handleClose = () => {
+    inputRef.current?.blur();
+  };
+
   // popoverの位置
   useEffect(() => {
     if (!popoverRef.current) return;
@@ -32,11 +39,19 @@ export function usePopover(
     style.maxHeight = `${popoverHeight}px`;
   }, [popoverPos, popoverHeight]);
 
-  // isOpentとフォーカスの同期
+  // focusとisOpenの同期
   useEffect(() => {
-    if (!inputRef.current) return;
-    isOpen ? inputRef.current.focus() : inputRef.current.blur();
-  }, [isOpen]);
+    const el = inputRef.current;
+    if (!el) return;
+    const handleFocus = () => setIsOpen(true);
+    const handleBlur = () => setIsOpen(false);
+    el.addEventListener("focus", handleFocus);
+    el.addEventListener("blur", handleBlur);
+    return () => {
+      el.removeEventListener("focus", handleFocus);
+      el.removeEventListener("blur", handleBlur);
+    };
+  }, []);
 
   // クリックイベント
   useEffect(() => {
@@ -44,10 +59,10 @@ export function usePopover(
       if (!wrapperRef.current) return;
       if (wrapperRef.current.contains(e.target as Node)) {
         e.preventDefault();
-        setIsOpen(true);
+        handleOpen();
         return;
       }
-      setIsOpen(false);
+      handleClose();
     };
     document.addEventListener("pointerdown", handlePointerDown, true);
     return () =>
@@ -126,7 +141,8 @@ export function usePopover(
 
   return {
     isOpen,
-    setIsOpen,
+    handleOpen,
+    handleClose,
     inputRef,
     wrapperRef,
     popoverRef,

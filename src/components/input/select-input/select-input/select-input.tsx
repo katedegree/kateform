@@ -45,7 +45,7 @@ export function SelectInput<T extends string | number>({
   popoverHeight = 160,
   ...props
 }: SelectInputProps<T>) {
-  const { isOpen, setIsOpen, inputRef, wrapperRef, popoverRef } = usePopover(
+  const { isOpen, handleClose, inputRef, wrapperRef, popoverRef } = usePopover(
     props.ref,
     popoverHeight
   );
@@ -88,7 +88,6 @@ export function SelectInput<T extends string | number>({
                     setSearch(e.target.value);
                   },
                   onBlur: () => setSearch(""),
-                  onFocus: () => setIsOpen(true),
                 })}
                 ref={inputRef}
               />
@@ -102,7 +101,7 @@ export function SelectInput<T extends string | number>({
             selected={value ? [value] : []}
             onSelect={(v) => {
               onChange?.(v === value ? null : v);
-              setIsOpen(false);
+              handleClose();
             }}
           />
         )}

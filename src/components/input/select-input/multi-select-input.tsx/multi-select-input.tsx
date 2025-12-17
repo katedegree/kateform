@@ -46,7 +46,7 @@ export function MultiSelectInput<T extends string | number>({
   popoverHeight = 160,
   ...props
 }: MultiSelectInputProps<T>) {
-  const { isOpen, setIsOpen, inputRef, wrapperRef, popoverRef } = usePopover(
+  const { isOpen, inputRef, wrapperRef, popoverRef } = usePopover(
     props.ref,
     popoverHeight
   );
@@ -102,7 +102,6 @@ export function MultiSelectInput<T extends string | number>({
                     setSearch(e.target.value);
                   },
                   onBlur: () => setSearch(""),
-                  onFocus: () => setIsOpen(true),
                   className: "flex-1",
                 })}
                 ref={inputRef}
