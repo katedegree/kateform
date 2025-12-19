@@ -45,10 +45,15 @@ export function usePopover(
         ? false
         : spaceBelow >= spaceAbove;
     const style = popoverRef.current.style;
-    style.top = isBottom
-      ? `calc(${wrapperRect.bottom}px + var(--kateform-spacing-sm))`
-      : `calc(${wrapperRect.top}px - ${popoverHeight}px - var(--kateform-spacing-sm))`;
-
+    if (isBottom) {
+      style.top = `calc(${wrapperRect.bottom}px + var(--kateform-spacing-sm))`;
+      style.bottom = "";
+    } else {
+      style.bottom = `calc(${
+        window.innerHeight - wrapperRect.top
+      }px + var(--kateform-spacing-sm))`;
+      style.top = "";
+    }
     style.left = `${wrapperRect.left}px`;
     style.width = `${wrapperRect.width}px`;
     style.maxHeight = `${popoverHeight}px`;
@@ -141,6 +146,7 @@ export function usePopover(
     };
   }, [isOpen]);
 
+  // クリック, スクロール時に閉じる
   useEffect(() => {
     if (!isOpen) return;
     const handleScroll = (e: Event) => {
@@ -158,6 +164,7 @@ export function usePopover(
     };
   }, [isOpen]);
 
+  // wrapperRefが変わった際にpopoverの位置を更新
   useEffect(() => {
     if (!isOpen || !wrapperRef.current) return;
     updatePopoverPosition();
