@@ -79,16 +79,16 @@ export function MultiSelectInput<T extends string | number>({
               ?.filter((option) => value.includes(option.value))
               .map((option) => (
                 <div
-                  className="flex items-center w-fit bg-popover whitespace-nowrap rounded-[calc(var(--radius-input)_-_var(--spacing-md))]"
+                  className="group cursor-pointer flex items-center w-fit bg-popover whitespace-nowrap rounded-[calc(var(--radius-input)_-_var(--spacing-md))]"
+                  onClick={() => {
+                    onChange?.(value.filter((v) => v !== option.value));
+                  }}
                   key={option.value}
                 >
                   <p className="pl-md">{option.label}</p>
                   <div
                     role="button"
-                    className="px-sm hover:text-error h-full flex items-center cursor-pointer"
-                    onClick={() => {
-                      onChange?.(value.filter((v) => v !== option.value));
-                    }}
+                    className="px-sm group-hover:text-error h-full flex items-center"
                   >
                     <MultiSelectRemoveIcon />
                   </div>
