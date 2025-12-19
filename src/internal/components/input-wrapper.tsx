@@ -1,9 +1,9 @@
 import { useEffect } from "react";
 import { cn } from "../utils";
-import { useStore } from "../store";
 import { motion } from "framer-motion";
+import { useError } from "../hooks";
 
-export interface InputWrapperProps {
+export interface InputWrapperProps<T> {
   id: string;
   label: string | undefined;
   children: React.ReactNode;
@@ -11,19 +11,24 @@ export interface InputWrapperProps {
   isDisabled: boolean;
   isReadOnly: boolean;
   errorMessage: string | undefined;
+  value: T;
 }
 
-export function InputWrapper({
+export function InputWrapper<T>({
   id,
+  value,
   label,
   children,
   onReadOnly,
   isDisabled,
   isReadOnly,
   errorMessage,
-}: InputWrapperProps) {
-  const { errorMessages, setErrorMessage } = useStore();
+}: InputWrapperProps<T>) {
+  const { errorMessages, setErrorMessage } = useError();
 
+  useEffect(() => {
+    setErrorMessage(id, "");
+  }, [value]);
   useEffect(() => {
     setErrorMessage(id, errorMessage || "");
   }, [errorMessage]);

@@ -6,7 +6,6 @@ import {
   MediaInputLabel,
   MediaInputPreview,
 } from "@kateform/internal/components";
-import { useStore } from "@kateform/internal/store";
 
 export interface MediaInputProps {
   id: string;
@@ -41,12 +40,12 @@ export function MediaInput({
   spinner,
 }: MediaInputProps) {
   const [uploadingUrl, setUploadingUrl] = useState<string>();
-  const { setErrorMessage } = useStore();
 
   return (
     <div className="w-fit">
       <InputWrapper
         id={id}
+        value={url}
         label={label}
         isDisabled={isDisabled}
         isReadOnly={isReadOnly}
@@ -59,7 +58,6 @@ export function MediaInput({
           type="file"
           className="hidden"
           onChange={(e) => {
-            setErrorMessage(id, "");
             const file = e.currentTarget.files?.[0];
             if (!file) return;
 

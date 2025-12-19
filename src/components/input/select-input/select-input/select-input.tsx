@@ -2,13 +2,13 @@
 
 import {
   Input,
+  InputField,
   InputWrapper,
   SelectChevronIcon,
 } from "@kateform/internal/components";
 import { usePopover } from "@kateform/internal/hooks/use-popover";
 import { SelectPopover } from "@kateform/internal/components/select-popover";
 import { useEffect, useState } from "react";
-import { inputProps } from "@kateform/internal/utils";
 
 export interface SelectInputProps<T extends string | number>
   extends Omit<
@@ -28,6 +28,7 @@ export interface SelectInputProps<T extends string | number>
   onChange?: (v: T | null) => void;
   value?: T | null;
   popoverHeight?: number;
+  notFoundText?: string;
 }
 
 export function SelectInput<T extends string | number>({
@@ -43,6 +44,7 @@ export function SelectInput<T extends string | number>({
   onChange,
   value,
   popoverHeight = 160,
+  notFoundText = "Not Found.",
   ...props
 }: SelectInputProps<T>) {
   const { isOpen, handleClose, inputRef, wrapperRef, popoverRef } = usePopover(
@@ -58,6 +60,7 @@ export function SelectInput<T extends string | number>({
   return (
     <InputWrapper
       id={props.id}
+      value={value}
       label={label}
       isDisabled={isDisabled}
       isReadOnly={isReadOnly}
@@ -65,40 +68,37 @@ export function SelectInput<T extends string | number>({
       onReadOnly={onReadOnly}
     >
       <div ref={wrapperRef}>
-        <Input
-          {...props}
+        <InputField
           startContent={startContent}
           endContent={endContent}
           actionContent={actionContent(isOpen)}
-          renderInput={
-            <div className="relative">
-              <p className="absolute">
-                {options?.find((o) => o.value === value)?.label}
-              </p>
-              <input
-                {...inputProps({
-                  ...props,
-                  placeholder: value ? "" : props.placeholder,
-                  type: "text",
-                  value: search,
-                  onChange: (e) => {
-                    if (value) {
-                      onChange?.(null);
-                    }
-                    setSearch(e.target.value);
-                  },
-                  onBlur: () => setSearch(""),
-                })}
-                ref={inputRef}
-              />
-            </div>
-          }
-        />
+        >
+          <div className="relative">
+            <p className="absolute">
+              {options?.find((o) => o.value === value)?.label}
+            </p>
+            <Input
+              {...props}
+              placeholder={value ? "" : props.placeholder}
+              type="text"
+              value={search}
+              onChange={(e) => {
+                if (value) {
+                  onChange?.(null);
+                }
+                setSearch(e.target.value);
+              }}
+              onBlur={() => setSearch("")}
+              ref={inputRef}
+            />
+          </div>
+        </InputField>
         {isOpen && (
           <SelectPopover
             popoverRef={popoverRef}
             options={options?.filter((o) => o.label.includes(search))}
             selected={value ? [value] : []}
+            notFoundText={notFoundText}
             onSelect={(v) => {
               onChange?.(v === value ? null : v);
               handleClose();

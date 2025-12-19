@@ -1,5 +1,6 @@
-export * from "./input";
+export * from "./input-field";
 export * from "./input-wrapper";
+export * from "./input";
 
 export * from "./media-input-label";
 export * from "./media-input-preview";

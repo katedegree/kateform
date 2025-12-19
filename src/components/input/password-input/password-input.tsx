@@ -3,6 +3,7 @@
 import { useState } from "react";
 import {
   Input,
+  InputField,
   InputWrapper,
   PasswordVisibilityIcon,
 } from "@kateform/internal/components";
@@ -38,14 +39,14 @@ export function PasswordInput({
   return (
     <InputWrapper
       id={props.id}
+      value={props.value}
       label={label}
       isDisabled={isDisabled}
       isReadOnly={isReadOnly}
       errorMessage={errorMessage}
       onReadOnly={onReadOnly}
     >
-      <Input
-        {...props}
+      <InputField
         startContent={startContent}
         endContent={endContent}
         actionContent={
@@ -53,8 +54,9 @@ export function PasswordInput({
             {actionContent(isVisible)}
           </button>
         }
-        type={isVisible ? "text" : "password"}
-      />
+      >
+        <Input {...props} type={isVisible ? "text" : "password"} />
+      </InputField>
     </InputWrapper>
   );
 }

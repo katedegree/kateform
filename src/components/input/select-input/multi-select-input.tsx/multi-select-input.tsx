@@ -2,6 +2,7 @@
 
 import {
   Input,
+  InputField,
   InputWrapper,
   MultiSelectRemoveIcon,
   SelectChevronIcon,
@@ -9,7 +10,6 @@ import {
 import { usePopover } from "@kateform/internal/hooks/use-popover";
 import { SelectPopover } from "@kateform/internal/components/select-popover";
 import { useEffect, useState } from "react";
-import { inputProps } from "@kateform/internal/utils";
 
 export interface MultiSelectInputProps<T extends string | number>
   extends Omit<
@@ -29,6 +29,7 @@ export interface MultiSelectInputProps<T extends string | number>
   onChange?: (v: T[]) => void;
   value?: T[];
   popoverHeight?: number;
+  notFoundText?: string;
 }
 
 export function MultiSelectInput<T extends string | number>({
@@ -44,6 +45,7 @@ export function MultiSelectInput<T extends string | number>({
   onChange,
   value = [],
   popoverHeight = 160,
+  notFoundText = "Not Found.",
   ...props
 }: MultiSelectInputProps<T>) {
   const { isOpen, inputRef, wrapperRef, popoverRef } = usePopover(
@@ -59,6 +61,7 @@ export function MultiSelectInput<T extends string | number>({
   return (
     <InputWrapper
       id={props.id}
+      value={value}
       label={label}
       isDisabled={isDisabled}
       isReadOnly={isReadOnly}
@@ -66,54 +69,51 @@ export function MultiSelectInput<T extends string | number>({
       onReadOnly={onReadOnly}
     >
       <div ref={wrapperRef}>
-        <Input
-          {...props}
+        <InputField
           startContent={startContent}
           endContent={endContent}
           actionContent={actionContent(isOpen)}
-          type="text"
-          renderInput={
-            <div className="flex flex-wrap gap-sm">
-              {options
-                ?.filter((option) => value.includes(option.value))
-                .map((option) => (
+        >
+          <div className="flex flex-wrap gap-sm">
+            {options
+              ?.filter((option) => value.includes(option.value))
+              .map((option) => (
+                <div
+                  className="flex items-center w-fit bg-popover whitespace-nowrap rounded-[calc(var(--radius-input)_-_var(--spacing-md))]"
+                  key={option.value}
+                >
+                  <p className="pl-md">{option.label}</p>
                   <div
-                    className="flex items-center w-fit bg-popover whitespace-nowrap rounded-[calc(var(--radius-input)_-_var(--spacing-md))]"
-                    key={option.value}
+                    role="button"
+                    className="px-sm hover:text-error h-full flex items-center cursor-pointer"
+                    onClick={() => {
+                      onChange?.(value.filter((v) => v !== option.value));
+                    }}
                   >
-                    <p className="pl-md">{option.label}</p>
-                    <button
-                      className="px-sm hover:text-error h-full flex items-center cursor-pointer"
-                      onClick={() => {
-                        onChange?.(value.filter((v) => v !== option.value));
-                      }}
-                    >
-                      <MultiSelectRemoveIcon />
-                    </button>
+                    <MultiSelectRemoveIcon />
                   </div>
-                ))}
-              <input
-                {...inputProps({
-                  ...props,
-                  placeholder: value.length ? "" : props.placeholder,
-                  type: "text",
-                  value: search,
-                  onChange: (e) => {
-                    setSearch(e.target.value);
-                  },
-                  onBlur: () => setSearch(""),
-                  className: "flex-1",
-                })}
-                ref={inputRef}
-              />
-            </div>
-          }
-        />
+                </div>
+              ))}
+            <Input
+              {...props}
+              placeholder={value.length ? "" : props.placeholder}
+              type="text"
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value);
+              }}
+              onBlur={() => setSearch("")}
+              className="flex-1"
+              ref={inputRef}
+            />
+          </div>
+        </InputField>
         {isOpen && (
           <SelectPopover
             popoverRef={popoverRef}
             options={options?.filter((o) => o.label.includes(search))}
             selected={value}
+            notFoundText={notFoundText}
             onSelect={(v) =>
               onChange?.(
                 value.includes(v) ? value.filter((i) => i !== v) : [...value, v]

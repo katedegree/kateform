@@ -3,6 +3,7 @@
 import type React from "react";
 import {
   Input,
+  InputField,
   InputWrapper,
   NumberCounterIcon,
 } from "@kateform/internal/components";
@@ -49,29 +50,33 @@ export function NumberInput({
   return (
     <InputWrapper
       id={props.id}
+      value={props.value}
       label={label}
       isDisabled={isDisabled}
       isReadOnly={isReadOnly}
       errorMessage={errorMessage}
       onReadOnly={onReadOnly}
     >
-      <Input
-        {...props}
+      <InputField
         startContent={startContent}
         endContent={endContent}
         actionContent={actionContent}
-        className="[&::-webkit-inner-spin-button]:[-webkit-appearance:none]"
-        onWheel={(e) => {
-          e.currentTarget.blur();
-          props.onWheel?.(e);
-        }}
-        onChange={(e) => {
-          props.onChange?.(Number(e.target.value));
-        }}
-        type="number"
-        inputMode="numeric"
-        value={props.value || ""}
-      />
+      >
+        <Input
+          {...props}
+          className="[&::-webkit-inner-spin-button]:[-webkit-appearance:none]"
+          onWheel={(e) => {
+            e.currentTarget.blur();
+            props.onWheel?.(e);
+          }}
+          onChange={(e) => {
+            props.onChange?.(Number(e.target.value));
+          }}
+          type="number"
+          inputMode="numeric"
+          value={props.value || ""}
+        />
+      </InputField>
     </InputWrapper>
   );
 }

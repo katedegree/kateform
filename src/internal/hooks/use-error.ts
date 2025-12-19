@@ -5,7 +5,7 @@ interface State {
   setErrorMessage: (key: string, message: string) => void;
 }
 
-export const useStore = create<State>((set) => ({
+export const useError = create<State>((set) => ({
   errorMessages: {},
   setErrorMessage: (key, message) =>
     set((state) => ({

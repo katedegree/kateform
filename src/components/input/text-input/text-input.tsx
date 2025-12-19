@@ -1,6 +1,6 @@
 "use client";
 
-import { Input, InputWrapper } from "@kateform/internal/components";
+import { Input, InputField, InputWrapper } from "@kateform/internal/components";
 
 export interface TextInputProps
   extends Omit<React.ComponentProps<"input">, "type" | "id" | "name"> {
@@ -29,19 +29,20 @@ export function TextInput({
   return (
     <InputWrapper
       id={props.id}
+      value={props.value}
       label={label}
       isDisabled={isDisabled}
       isReadOnly={isReadOnly}
       errorMessage={errorMessage}
       onReadOnly={onReadOnly}
     >
-      <Input
-        {...props}
+      <InputField
         startContent={startContent}
         endContent={endContent}
         actionContent={actionContent}
-        type="text"
-      />
+      >
+        <Input {...props} type="text" />
+      </InputField>
     </InputWrapper>
   );
 }
