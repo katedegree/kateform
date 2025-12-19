@@ -5,13 +5,6 @@ export function usePopover(
   popoverHeight: number
 ) {
   const [isOpen, setIsOpen] = useState(false);
-  const [popoverPos, setPopoverPos] = useState({
-    top: 0,
-    bottom: 0,
-    left: 0,
-    width: 0,
-    isBottom: true,
-  });
   const inputRef = useRef<HTMLInputElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const popoverRef = useRef<HTMLDivElement>(null);
@@ -26,18 +19,59 @@ export function usePopover(
   const handleClose = () => {
     inputRef.current?.blur();
   };
+  const updatePopoverPosition = () => {
+    if (!popoverRef.current || !wrapperRef.current) return;
+    const wrapperRect = wrapperRef.current.getBoundingClientRect();
+    let parent: HTMLElement | null = wrapperRef.current.parentElement;
+    let containerRect = {
+      top: 0,
+      bottom: window.innerHeight,
+    };
+    while (parent) {
+      const style = getComputedStyle(parent);
+      if (/(auto|scroll)/.test(style.overflow + style.overflowY)) {
+        const rect = parent.getBoundingClientRect();
+        containerRect = { top: rect.top, bottom: rect.bottom };
+        break;
+      }
+      parent = parent.parentElement;
+    }
+    const spaceBelow = containerRect.bottom - wrapperRect.bottom;
+    const spaceAbove = wrapperRect.top - containerRect.top;
+    const isBottom =
+      spaceBelow >= popoverHeight
+        ? true
+        : spaceAbove >= popoverHeight
+        ? false
+        : spaceBelow >= spaceAbove;
+    const style = popoverRef.current.style;
+    style.top = isBottom
+      ? `calc(${wrapperRect.bottom}px + var(--kateform-spacing-sm))`
+      : `calc(${wrapperRect.top}px - ${popoverHeight}px - var(--kateform-spacing-sm))`;
+
+    style.left = `${wrapperRect.left}px`;
+    style.width = `${wrapperRect.width}px`;
+    style.maxHeight = `${popoverHeight}px`;
+  };
 
   // popoverの位置
   useEffect(() => {
-    if (!popoverRef.current) return;
-    const style = popoverRef.current.style;
-    style.top = popoverPos.isBottom
-      ? `calc(${popoverPos.bottom}px + var(--kateform-spacing-sm))`
-      : `calc(${popoverPos.top}px - ${popoverHeight}px - var(--kateform-spacing-sm))`;
-    style.left = `${popoverPos.left}px`;
-    style.width = `${popoverPos.width}px`;
-    style.maxHeight = `${popoverHeight}px`;
-  }, [popoverPos, popoverHeight]);
+    if (!isOpen) return;
+    updatePopoverPosition();
+    const observer = new ResizeObserver(() => {
+      updatePopoverPosition();
+    });
+    if (wrapperRef.current) {
+      observer.observe(wrapperRef.current);
+    }
+    window.addEventListener("scroll", updatePopoverPosition, true);
+    window.addEventListener("resize", updatePopoverPosition);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("scroll", updatePopoverPosition, true);
+      window.removeEventListener("resize", updatePopoverPosition);
+    };
+  }, [isOpen, popoverHeight]);
 
   // focusとisOpenの同期
   useEffect(() => {
@@ -107,35 +141,36 @@ export function usePopover(
     };
   }, [isOpen]);
 
-  // スクロール時のpopover位置
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleScroll = (e: Event) => {
+      const target = e.target as Node | null;
+      if (popoverRef.current && target && popoverRef.current.contains(target)) {
+        return;
+      }
+      handleClose();
+    };
+    document.addEventListener("scroll", handleScroll, true);
+    window.addEventListener("resize", handleScroll);
+    return () => {
+      document.removeEventListener("scroll", handleScroll, true);
+      window.removeEventListener("resize", handleScroll);
+    };
+  }, [isOpen]);
+
   useEffect(() => {
     if (!isOpen || !wrapperRef.current) return;
-    const rect = wrapperRef.current.getBoundingClientRect();
-    const spaceBelow = window.innerHeight - rect.bottom;
-    const initialIsBottom = spaceBelow >= popoverHeight;
-    setPopoverPos({
-      top: rect.top,
-      bottom: rect.bottom,
-      left: rect.left,
-      width: rect.width,
-      isBottom: initialIsBottom,
+    updatePopoverPosition();
+    const observer = new ResizeObserver(() => {
+      updatePopoverPosition();
     });
-    const updatePopoverPos = () => {
-      if (!wrapperRef.current) return;
-      const rect = wrapperRef.current.getBoundingClientRect();
-      setPopoverPos((prev) => ({
-        ...prev,
-        top: rect.top,
-        bottom: rect.bottom,
-        left: rect.left,
-        width: rect.width,
-      }));
-    };
-    window.addEventListener("scroll", updatePopoverPos);
-    window.addEventListener("resize", updatePopoverPos);
+    observer.observe(wrapperRef.current);
+    window.addEventListener("scroll", updatePopoverPosition, true);
+    window.addEventListener("resize", updatePopoverPosition);
     return () => {
-      window.removeEventListener("scroll", updatePopoverPos);
-      window.removeEventListener("resize", updatePopoverPos);
+      observer.disconnect();
+      window.removeEventListener("scroll", updatePopoverPosition, true);
+      window.removeEventListener("resize", updatePopoverPosition);
     };
   }, [isOpen, popoverHeight]);
 
