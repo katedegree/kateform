@@ -46,17 +46,17 @@ export function SelectPopover<T extends string | number>({
           },
         },
       }}
-      className="[&>*]:p-md fixed z-99 text-option p-sm rounded-input bg-popover border border-popover-hover overflow-y-auto shadow shadow-popover-hover no-scrollbar"
+      className="*:p-md fixed z-99 text-option p-sm rounded-input bg-popover border border-popover-hover overflow-y-auto shadow shadow-popover-hover no-scrollbar"
     >
       {options?.length === 0 && <p>{notFoundText}</p>}
       {options?.map((option) => (
         <div
           key={option.value}
-          className="flex justify-between items-center hover:bg-popover-hover rounded-[calc(var(--radius-input)_-_var(--spacing-sm))]"
+          className="flex items-center gap-sm hover:bg-popover-hover rounded-[calc(var(--radius-input)-var(--spacing-sm))]"
           onClick={() => onSelect?.(option.value)}
         >
-          <p>{option.label}</p>
           {selected.includes(option.value) && <SelectCheckIcon />}
+          {option.label}
         </div>
       ))}
     </motion.div>

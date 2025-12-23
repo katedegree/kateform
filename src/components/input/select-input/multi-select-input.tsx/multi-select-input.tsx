@@ -75,7 +75,7 @@ export function MultiSelectInput<T extends string | number>({
           actionContent={actionContent(isOpen)}
         >
           {value.length > 0 && (
-            <div className="overflow-x-auto flex gap-sm [scrollbar-color:var(--color-popover)_transparent] [scrollbar-width:thin]">
+            <div className="overflow-x-auto flex gap-sm no-scrollbar">
               {options
                 .filter((option) => value.includes(option.value))
                 .map((option) => (

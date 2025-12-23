@@ -10,7 +10,7 @@ export function SelectCheckIcon() {
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
-      className="w-[1lh] h-[1lh]"
+      className="w-[1lh] h-lh"
     >
       <path d="M20 6 9 17l-5-5" />
     </svg>
