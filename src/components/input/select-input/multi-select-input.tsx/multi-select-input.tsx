@@ -82,7 +82,7 @@ export function MultiSelectInput<T extends string | number>({
                   <div
                     role="button"
                     className="group cursor-pointer flex items-center bg-popover whitespace-nowrap rounded-[calc(var(--radius-input)-var(--spacing-md))]"
-                    onPointerDown={() => {
+                    onMouseDown={() => {
                       onChange?.(value.filter((v) => v !== option.value));
                     }}
                     key={option.value}
