@@ -41,7 +41,7 @@ export function MultiSelectInput<T extends string | number>({
   startContent,
   endContent,
   actionContent = (isOpen) => <SelectChevronIcon isOpen={isOpen} />,
-  options,
+  options = [],
   onChange,
   value = [],
   popoverHeight = 160,
@@ -74,37 +74,39 @@ export function MultiSelectInput<T extends string | number>({
           endContent={endContent}
           actionContent={actionContent(isOpen)}
         >
-          <div className="flex flex-wrap gap-sm">
-            {options
-              ?.filter((option) => value.includes(option.value))
-              .map((option) => (
-                <div
-                  role="button"
-                  className="group cursor-pointer flex items-center w-fit bg-popover whitespace-nowrap rounded-[calc(var(--radius-input)_-_var(--spacing-md))]"
-                  onPointerDown={() => {
-                    onChange?.(value.filter((v) => v !== option.value));
-                  }}
-                  key={option.value}
-                >
-                  <p className="pl-md">{option.label}</p>
-                  <div className="px-sm group-hover:text-error h-full flex items-center">
-                    <MultiSelectRemoveIcon />
+          {value.length > 0 && (
+            <div className="overflow-x-auto flex gap-sm [scrollbar-color:var(--color-popover)_transparent] [scrollbar-width:thin]">
+              {options
+                .filter((option) => value.includes(option.value))
+                .map((option) => (
+                  <div
+                    role="button"
+                    className="group cursor-pointer flex items-center bg-popover whitespace-nowrap rounded-[calc(var(--radius-input)-var(--spacing-md))]"
+                    onPointerDown={() => {
+                      onChange?.(value.filter((v) => v !== option.value));
+                    }}
+                    key={option.value}
+                  >
+                    <p className="pl-md">{option.label}</p>
+                    <div className="px-sm group-hover:text-error">
+                      <MultiSelectRemoveIcon />
+                    </div>
                   </div>
-                </div>
-              ))}
-            <Input
-              {...props}
-              placeholder={value.length ? "" : props.placeholder}
-              type="text"
-              value={search}
-              onChange={(e) => {
-                setSearch(e.target.value);
-              }}
-              onBlur={() => setSearch("")}
-              className="flex-1"
-              ref={inputRef}
-            />
-          </div>
+                ))}
+            </div>
+          )}
+          <Input
+            {...props}
+            placeholder={value.length > 0 ? "" : props.placeholder}
+            type="text"
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+            }}
+            onBlur={() => setSearch("")}
+            ref={inputRef}
+            className={value.length > 0 ? "not-focus:absolute" : ""}
+          />
         </InputField>
         {isOpen && (
           <SelectPopover

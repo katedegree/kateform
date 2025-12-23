@@ -9,35 +9,24 @@ export function usePopover(
   const wrapperRef = useRef<HTMLDivElement>(null);
   const popoverRef = useRef<HTMLDivElement>(null);
 
-  if (ref) {
-    useImperativeHandle(ref, () => inputRef.current!);
-  }
+  useImperativeHandle(ref, () => inputRef.current!, [ref]);
 
   const handleOpen = () => {
-    inputRef.current && inputRef.current.focus();
+    inputRef.current?.focus();
+    setIsOpen(true);
   };
   const handleClose = () => {
     inputRef.current?.blur();
+    setIsOpen(false);
   };
+
   const updatePopoverPosition = () => {
     if (!popoverRef.current || !wrapperRef.current) return;
     const wrapperRect = wrapperRef.current.getBoundingClientRect();
-    let parent: HTMLElement | null = wrapperRef.current.parentElement;
-    let containerRect = {
-      top: 0,
-      bottom: window.innerHeight,
-    };
-    while (parent) {
-      const style = getComputedStyle(parent);
-      if (/(auto|scroll)/.test(style.overflow + style.overflowY)) {
-        const rect = parent.getBoundingClientRect();
-        containerRect = { top: rect.top, bottom: rect.bottom };
-        break;
-      }
-      parent = parent.parentElement;
-    }
-    const spaceBelow = containerRect.bottom - wrapperRect.bottom;
-    const spaceAbove = wrapperRect.top - containerRect.top;
+    const viewportTop = 0;
+    const viewportBottom = window.innerHeight;
+    const spaceBelow = viewportBottom - wrapperRect.bottom;
+    const spaceAbove = wrapperRect.top - viewportTop;
     const isBottom =
       spaceBelow >= popoverHeight
         ? true
@@ -50,7 +39,7 @@ export function usePopover(
       style.bottom = "";
     } else {
       style.bottom = `calc(${
-        window.innerHeight - wrapperRect.top
+        viewportBottom - wrapperRect.top
       }px + var(--kateform-spacing-sm))`;
       style.top = "";
     }
@@ -58,17 +47,11 @@ export function usePopover(
     style.width = `${wrapperRect.width}px`;
     style.maxHeight = `${popoverHeight}px`;
   };
-
-  // popoverの位置
   useEffect(() => {
-    if (!isOpen) return;
+    if (!isOpen || !wrapperRef.current) return;
     updatePopoverPosition();
-    const observer = new ResizeObserver(() => {
-      updatePopoverPosition();
-    });
-    if (wrapperRef.current) {
-      observer.observe(wrapperRef.current);
-    }
+    const observer = new ResizeObserver(updatePopoverPosition);
+    observer.observe(wrapperRef.current);
     window.addEventListener("scroll", updatePopoverPosition, true);
     window.addEventListener("resize", updatePopoverPosition);
     return () => {
@@ -78,34 +61,25 @@ export function usePopover(
     };
   }, [isOpen, popoverHeight]);
 
-  // focusとisOpenの同期
-  useEffect(() => {
-    const el = inputRef.current;
-    if (!el) return;
-    const handleFocus = () => setIsOpen(true);
-    const handleBlur = () => setIsOpen(false);
-    el.addEventListener("focus", handleFocus);
-    el.addEventListener("blur", handleBlur);
-    return () => {
-      el.removeEventListener("focus", handleFocus);
-      el.removeEventListener("blur", handleBlur);
-    };
-  }, []);
-
   // クリックイベント
   useEffect(() => {
-    const handlePointerDown = (e: PointerEvent) => {
+    const handlePointerDown = (e: MouseEvent) => {
       if (!wrapperRef.current) return;
-      if (wrapperRef.current.contains(e.target as Node)) {
+      const target = e.target as Node;
+      if (inputRef.current?.contains(target)) {
+        handleOpen();
+        return;
+      }
+      if (wrapperRef.current.contains(target)) {
         e.preventDefault();
         handleOpen();
         return;
       }
       handleClose();
     };
-    document.addEventListener("pointerdown", handlePointerDown, true);
+    document.addEventListener("mousedown", handlePointerDown, true);
     return () =>
-      document.removeEventListener("pointerdown", handlePointerDown, true);
+      document.removeEventListener("mousedown", handlePointerDown, true);
   }, []);
 
   // popover内のスクロールイベント
@@ -151,7 +125,8 @@ export function usePopover(
     if (!isOpen) return;
     const handleScroll = (e: Event) => {
       const target = e.target as Node | null;
-      if (popoverRef.current && target && popoverRef.current.contains(target)) {
+      if (!target) return;
+      if (wrapperRef.current?.contains(target)) {
         return;
       }
       handleClose();
@@ -163,23 +138,6 @@ export function usePopover(
       window.removeEventListener("resize", handleScroll);
     };
   }, [isOpen]);
-
-  // wrapperRefが変わった際にpopoverの位置を更新
-  useEffect(() => {
-    if (!isOpen || !wrapperRef.current) return;
-    updatePopoverPosition();
-    const observer = new ResizeObserver(() => {
-      updatePopoverPosition();
-    });
-    observer.observe(wrapperRef.current);
-    window.addEventListener("scroll", updatePopoverPosition, true);
-    window.addEventListener("resize", updatePopoverPosition);
-    return () => {
-      observer.disconnect();
-      window.removeEventListener("scroll", updatePopoverPosition, true);
-      window.removeEventListener("resize", updatePopoverPosition);
-    };
-  }, [isOpen, popoverHeight]);
 
   return {
     isOpen,
