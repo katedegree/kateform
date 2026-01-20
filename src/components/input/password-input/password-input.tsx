@@ -50,7 +50,11 @@ export function PasswordInput({
         startContent={startContent}
         endContent={endContent}
         actionContent={
-          <button onClick={() => setIsVisible(!isVisible)}>
+          <button
+            className="cursor-pointer"
+            type="button"
+            onClick={() => setIsVisible(!isVisible)}
+          >
             {actionContent(isVisible)}
           </button>
         }

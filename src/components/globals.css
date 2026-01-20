@@ -68,7 +68,6 @@
   --kateform-spacing-lg: 1rem; /* 16px */
 
   --kateform-radius-input: 1rem; /* 16px */
-  --kateform-radius-form: 1rem; /* 16px */
 }
 
 .dark {
@@ -101,13 +100,13 @@
   --text-sm: var(--kateform-text-sm);
   --text-md: var(--kateform-text-md);
 
+  --spacing-0: 0;
   --spacing-1: var(--kateform-spacing-1);
   --spacing-sm: var(--kateform-spacing-sm);
   --spacing-md: var(--kateform-spacing-md);
   --spacing-lg: var(--kateform-spacing-lg);
 
   --radius-input: var(--kateform-radius-input);
-  --radius-form: var(--kateform-radius-form);
 
   --font-weight-normal: 400;
   --font-weight-bold: 700;

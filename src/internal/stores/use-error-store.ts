@@ -33,10 +33,10 @@ state = {
   },
 };
 
-const _useError = create(storeApi);
+const _useErrorStore = create(storeApi);
 
-export const useError = () =>
-  _useError(
+export const useErrorStore = () =>
+  _useErrorStore(
     useShallow((s) => ({
       errorMessages: s.errorMessages,
       setErrorMessage: s.setErrorMessage,

@@ -1,7 +1,7 @@
 import { useEffect } from "react";
-import { cn } from "../utils";
+import { cn } from "@kateform/utils";
 import { motion } from "framer-motion";
-import { useError } from "../hooks";
+import { useErrorStore } from "../stores";
 
 export interface InputWrapperProps<T> {
   id: string;
@@ -24,7 +24,7 @@ export function InputWrapper<T>({
   isReadOnly,
   errorMessage,
 }: InputWrapperProps<T>) {
-  const { errorMessages, setErrorMessage } = useError();
+  const { errorMessages, setErrorMessage } = useErrorStore();
 
   useEffect(() => {
     setErrorMessage(id, "");
