@@ -24,13 +24,13 @@ export function InputWrapper<T>({
   isReadOnly,
   errorMessage,
 }: InputWrapperProps<T>) {
-  const { errorMessages, setErrorMessage } = useErrorStore();
+  const { errors, setError } = useErrorStore();
 
   useEffect(() => {
-    setErrorMessage(id, "");
+    setError(id, "");
   }, [value]);
   useEffect(() => {
-    setErrorMessage(id, errorMessage || "");
+    setError(id, errorMessage || "");
   }, [errorMessage]);
 
   return (
@@ -45,10 +45,10 @@ export function InputWrapper<T>({
       <motion.div
         className={cn(
           "relative rounded-input outline-solid",
-          isDisabled && "opacity-80"
+          isDisabled && "opacity-80",
         )}
         animate={
-          errorMessages[id]
+          errors[id]
             ? {
                 outlineWidth: "1px",
                 outlineOffset: "1px",
@@ -76,10 +76,10 @@ export function InputWrapper<T>({
       <p
         className={cn(
           "h-[1lh] pt-1 text-sm text-error",
-          !errorMessages[id] && "opacity-0"
+          !errors[id] && "opacity-0",
         )}
       >
-        {errorMessages[id]}
+        {errors[id]}
       </p>
     </div>
   );

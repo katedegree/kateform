@@ -5,10 +5,17 @@ export interface DrawerProps {
   isOpen: boolean;
   children: React.ReactNode;
   placement: "top" | "bottom" | "left" | "right";
+  zIndex?: number;
   onClose?: () => void;
 }
 
-export function Drawer({ isOpen, placement, children, onClose }: DrawerProps) {
+export function Drawer({
+  isOpen,
+  placement,
+  zIndex,
+  children,
+  onClose,
+}: DrawerProps) {
   if (!isOpen) return null;
 
   const key = placement === "top" || placement === "bottom" ? "y" : "x";
@@ -44,7 +51,10 @@ export function Drawer({ isOpen, placement, children, onClose }: DrawerProps) {
   };
   return (
     <AnimatePresence>
-      <div className={cn("fixed inset-0 flex flex-col", positions[placement])}>
+      <div
+        className={cn("fixed inset-0 flex flex-col", positions[placement])}
+        style={{ zIndex }}
+      >
         <div className="absolute inset-0 bg-label/20" onClick={onClose} />
         <motion.div
           className={cn(

@@ -11,11 +11,10 @@ import { usePopover } from "@kateform/internal/hooks/use-popover";
 import { SelectPopover } from "@kateform/internal/components/select-popover";
 import { useEffect, useState } from "react";
 
-export interface MultiSelectInputProps<T extends string | number>
-  extends Omit<
-    React.ComponentProps<"input">,
-    "type" | "id" | "name" | "onChange" | "value"
-  > {
+export interface MultiSelectInputProps<T extends string | number> extends Omit<
+  React.ComponentProps<"input">,
+  "type" | "id" | "name" | "onChange" | "value"
+> {
   id: string;
   label?: string;
   isDisabled?: boolean;
@@ -50,7 +49,7 @@ export function MultiSelectInput<T extends string | number>({
 }: MultiSelectInputProps<T>) {
   const { isOpen, inputRef, wrapperRef, popoverRef } = usePopover(
     props.ref,
-    popoverHeight
+    popoverHeight,
   );
 
   const [search, setSearch] = useState("");
@@ -75,7 +74,7 @@ export function MultiSelectInput<T extends string | number>({
           actionContent={actionContent(isOpen)}
         >
           {value.length > 0 && (
-            <div className="overflow-x-auto flex gap-sm no-scrollbar">
+            <div className="overflow-x-auto flex *:shrink-0 gap-sm no-scrollbar">
               {options
                 .filter((option) => value.includes(option.value))
                 .map((option) => (
@@ -118,7 +117,9 @@ export function MultiSelectInput<T extends string | number>({
             notFoundText={notFoundText}
             onSelect={(v) =>
               onChange?.(
-                value.includes(v) ? value.filter((i) => i !== v) : [...value, v]
+                value.includes(v)
+                  ? value.filter((i) => i !== v)
+                  : [...value, v],
               )
             }
           />
