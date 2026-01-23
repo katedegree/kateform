@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Drawer } from "./drawer";
 import type { Meta, StoryObj } from "@storybook/react";
+import { cn } from "@kateform/utils";
 
 const meta = {
   component: Drawer,
@@ -22,7 +23,15 @@ export const Default: Story = {
           Open Drawer
         </button>
         <Drawer {...args} isOpen={isOpen} onClose={() => setIsOpen(false)}>
-          <div className="relative bg-flat h-full flex items-center justify-center w-[75vw] rounded-r-input">
+          <div
+            className={cn(
+              "relative bg-flat h-full flex items-center justify-center",
+              args.placement === "top" && "h-[75vh] rounded-b-input",
+              args.placement === "bottom" && "h-[75vh] rounded-t-input",
+              args.placement === "left" && "w-[75vw] rounded-r-input",
+              args.placement === "right" && "w-[75vw] rounded-l-input",
+            )}
+          >
             <h2 className="text-[24px]">Drawer</h2>
             <button
               className="absolute top-lg right-lg"
