@@ -1,4 +1,4 @@
-import { create, useShallow } from "@kateform/internal/store";
+import { create } from "@kateform/internal/store";
 import type { StoreApi } from "@kateform/internal/store";
 
 type ErrorState = {
@@ -23,6 +23,7 @@ const notify = () => listeners.forEach((l) => l());
 state = {
   errors: {},
   setError: (key, message) => {
+    if (state.errors[key] === message) return;
     state = {
       ...state,
       errors: {
@@ -35,22 +36,16 @@ state = {
   setErrors: (messages) => {
     state = {
       ...state,
-      errors: {
-        ...state.errors,
-        ...messages,
-      },
+      errors: messages,
     };
     notify();
   },
 };
 
-const _useErrorStore = create(storeApi);
+export const _useErrorStore = create(storeApi);
+export const useErrorStore = (id: string) => {
+  const error = _useErrorStore((s) => s.errors[id] ?? "");
+  const setError = _useErrorStore((s) => s.setError);
 
-export const useErrorStore = () =>
-  _useErrorStore(
-    useShallow((s) => ({
-      errors: s.errors,
-      setError: s.setError,
-      setErrors: s.setErrors,
-    })),
-  );
+  return { error, setError };
+};

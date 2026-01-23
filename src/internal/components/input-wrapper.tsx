@@ -10,7 +10,6 @@ export interface InputWrapperProps<T> {
   onReadOnly: (() => void) | undefined;
   isDisabled: boolean;
   isReadOnly: boolean;
-  errorMessage: string | undefined;
   value: T;
 }
 
@@ -22,16 +21,14 @@ export function InputWrapper<T>({
   onReadOnly,
   isDisabled,
   isReadOnly,
-  errorMessage,
 }: InputWrapperProps<T>) {
-  const { errors, setError } = useErrorStore();
+  const { error, setError } = useErrorStore(id);
 
   useEffect(() => {
-    setError(id, "");
-  }, [value]);
-  useEffect(() => {
-    setError(id, errorMessage || "");
-  }, [errorMessage]);
+    if (error) {
+      setError(id, "");
+    }
+  }, [value, error, id, setError]);
 
   return (
     <div>
@@ -48,7 +45,7 @@ export function InputWrapper<T>({
           isDisabled && "opacity-80",
         )}
         animate={
-          errors[id]
+          error
             ? {
                 outlineWidth: "1px",
                 outlineOffset: "1px",
@@ -67,19 +64,14 @@ export function InputWrapper<T>({
       >
         {children}
         {isReadOnly && (
-          <div className="absolute inset-[0]" onClick={onReadOnly} />
+          <div className="absolute inset-0" onClick={onReadOnly} />
         )}
         {isDisabled && (
-          <div className="absolute inset-[0] hover:cursor-not-allowed" />
+          <div className="absolute inset-0 hover:cursor-not-allowed" />
         )}
       </motion.div>
-      <p
-        className={cn(
-          "h-[1lh] pt-1 text-sm text-error",
-          !errors[id] && "opacity-0",
-        )}
-      >
-        {errors[id]}
+      <p className={cn("h-lh pt-1 text-sm text-error", !error && "opacity-0")}>
+        {error}
       </p>
     </div>
   );

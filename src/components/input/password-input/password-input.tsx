@@ -15,7 +15,6 @@ export interface PasswordInputProps
   isDisabled?: boolean;
   isReadOnly?: boolean;
   onReadOnly?: () => void;
-  errorMessage?: string;
   startContent?: React.ReactNode;
   endContent?: React.ReactNode;
   actionContent?: (isVisible: boolean) => React.ReactNode;
@@ -26,7 +25,6 @@ export function PasswordInput({
   isDisabled = false,
   isReadOnly = false,
   onReadOnly,
-  errorMessage,
   startContent,
   endContent,
   actionContent = (isVisible) => (
@@ -43,7 +41,6 @@ export function PasswordInput({
       label={label}
       isDisabled={isDisabled}
       isReadOnly={isReadOnly}
-      errorMessage={errorMessage}
       onReadOnly={onReadOnly}
     >
       <InputField
