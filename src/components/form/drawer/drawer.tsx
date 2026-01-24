@@ -55,7 +55,10 @@ export function Drawer({
         className={cn("fixed inset-0 flex flex-col", positions[placement])}
         style={{ zIndex }}
       >
-        <div className="absolute inset-0 bg-label/20" onClick={onClose} />
+        <div
+          className="absolute inset-0 bg-label opacity-20"
+          onClick={onClose}
+        />
         <motion.div
           className={cn(
             "absolute",
