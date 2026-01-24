@@ -76,7 +76,7 @@ export function MultiSelectInput<T extends string | number>({
                 .filter((option) => value.includes(option.value))
                 .map((option) => (
                   <div
-                    className="flex items-center bg-popover whitespace-nowrap rounded-[calc(var(--radius-input)-var(--spacing-md))] overflow-hidden"
+                    className="flex items-center bg-popover whitespace-nowrap rounded-[calc(var(--kateform-radius-input)-var(--kateform-spacing-md))] overflow-hidden"
                     key={option.value}
                   >
                     <p className="pl-md pr-sm">{option.label}</p>
