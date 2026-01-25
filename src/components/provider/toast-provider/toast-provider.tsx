@@ -15,11 +15,13 @@ export interface ToastProviderProps<T extends string> {
     | "top-right"
     | "top-left"
     | "top-center";
+  zIndex?: number;
 }
 
 export function ToastProvider<T extends string>({
   component: ToastComponent,
   placement = "bottom-right",
+  zIndex = 50,
 }: ToastProviderProps<T>) {
   const { toasts, stopTimer, startTimer } = useToastStore();
   const [isHovered, setIsHovered] = useState(false);
@@ -66,6 +68,7 @@ export function ToastProvider<T extends string>({
         placement.includes("right") && "right-md",
         placement.includes("center") && "left-1/2 -translate-x-1/2",
       )}
+      style={{ zIndex }}
       onMouseEnter={() => {
         setIsHovered(true);
         stopTimer();

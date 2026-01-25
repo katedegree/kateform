@@ -12,7 +12,7 @@ export interface DrawerProps {
 export function Drawer({
   isOpen,
   placement,
-  zIndex,
+  zIndex = 40,
   children,
   onClose,
 }: DrawerProps) {
