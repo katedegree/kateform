@@ -23,26 +23,36 @@ const notify = () => listeners.forEach((l) => l());
 state = {
   errors: {},
   setError: (key, message) => {
-    if (state.errors[key] === message) return;
-    state = {
-      ...state,
-      errors: {
-        ...state.errors,
-        [key]: message,
-      },
-    };
+    const currentValue = state.errors[key] ?? "";
+    if (currentValue === message) return;
+    if (message === "") {
+      const { [key]: _, ...rest } = state.errors;
+      state = {
+        ...state,
+        errors: rest,
+      };
+    } else {
+      state = {
+        ...state,
+        errors: {
+          ...state.errors,
+          [key]: message,
+        },
+      };
+    }
     notify();
   },
   setErrors: (messages) => {
     state = {
       ...state,
-      errors: messages,
+      errors: { ...messages },
     };
     notify();
   },
 };
 
 export const _useErrorStore = create(storeApi);
+
 export const useErrorStore = (id: string) => {
   const error = _useErrorStore((s) => s.errors[id] ?? "");
   const setError = _useErrorStore((s) => s.setError);

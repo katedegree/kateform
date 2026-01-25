@@ -25,10 +25,8 @@ export function InputWrapper<T>({
   const { error, setError } = useErrorStore(id);
 
   useEffect(() => {
-    if (error) {
-      setError(id, "");
-    }
-  }, [value, error, id, setError]);
+    setError(id, "");
+  }, [value, id, setError]);
 
   return (
     <div>
