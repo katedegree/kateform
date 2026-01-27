@@ -114,8 +114,6 @@ const kateformPackages = [
   "clsx",
   "framer-motion",
   "tailwindcss",
-  "@tailwindcss/cli",
-  "@tailwindcss/postcss",
   "tailwind-merge",
 ];
 
